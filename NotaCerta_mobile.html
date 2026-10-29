@@ -1,0 +1,498 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#287D80">
+<title>NotaCerta</title>
+<style>
+:root{--green:#287D80;--green2:#3F9294;--mint:#DDF1F0;--bg:#F1F8F8;--card:#FFFFFF;--text:#38545A;--muted:#71878B;--line:#DCE9E9;--red:#A65353;--amber:#92743D;--shadow:0 8px 28px #285f6010;--soft:#EAF4F4}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+button,input,select{font:inherit}button{cursor:pointer;border:0;border-radius:11px;padding:10px 14px;font-weight:650;background:var(--green);color:white}button.secondary{background:#E4F0F0;color:#3E777A}button.danger{background:#fff0f0;color:var(--red)}button.small{padding:6px 9px;font-size:13px}
+header{background:var(--green);color:#fff;padding:22px max(18px,calc((100% - 1100px)/2));}
+.headrow{display:flex;align-items:center;gap:12px}.logo{width:46px;height:46px;border-radius:14px;background:#ffffff20;display:grid;place-items:center;font-size:25px}
+header h1{font-size:25px;margin:0}header p{margin:3px 0 0;color:#D8EEEE;font-size:14px}
+.wrap{max-width:1100px;margin:24px auto;padding:0 18px 48px}.notice{padding:12px 14px;border:1px solid #e8d8a6;background:#fff9e7;border-radius:13px;color:#624b17;font-size:13px;margin-bottom:18px}
+.grid{display:grid;grid-template-columns:1.1fr .9fr;gap:18px}.dashboard-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}.subject-card{display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;padding:18px}.goal-field{width:100%;margin:0;text-align:left}.goal-field label{font-size:12px}.goal-field input{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--text)}.subject-actions{display:flex;gap:7px;flex-wrap:wrap;justify-content:center;width:100%}.subject-card h3{margin:0;overflow-wrap:anywhere}.ring{width:104px;height:104px;display:block}.dashboard-top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.subject-empty{padding:24px 12px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:14px}.view-hidden{display:none!important}.stack{display:grid;gap:18px}.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:var(--shadow);min-width:0}
+h2{font-size:18px;margin:0 0 5px}h3{font-size:15px;margin:0 0 10px}.sub{color:var(--muted);font-size:13px;margin:0 0 16px}.row{display:flex;align-items:center;gap:10px}.between{justify-content:space-between}.field{display:grid;gap:5px;margin:10px 0}.field label{font-size:13px;font-weight:650;color:#557176}.field input,.field select,input,select{min-width:0;border:1px solid #D5E4E4;border-radius:10px;padding:10px;background:#fff;color:var(--text);width:100%}
+input[type=number]{font-variant-numeric:tabular-nums}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px}.stat{background:#EFF6F6;border-radius:13px;padding:12px}.stat span{display:block;color:var(--muted);font-size:12px}.stat strong{font-size:22px;display:block;margin-top:3px}
+.progress{height:7px;background:#E1EEEE;border-radius:99px;overflow:hidden;margin-top:10px}.progress div{height:100%;background:#69B8B8;width:0}
+.category{display:grid;grid-template-columns:minmax(0,1fr) 95px auto;gap:9px;align-items:center;margin:9px 0}.category input{padding:8px}.category .weight{display:flex;align-items:center;gap:4px}.weight input{width:65px}
+.tablewrap{overflow-x:auto}table{border-collapse:collapse;width:100%;min-width:570px}th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);font-size:13px}th{font-size:12px;color:var(--muted);font-weight:700}td input,td select{padding:7px;font-size:13px}td .score{width:82px}td .date{width:140px}td .name{min-width:120px}
+.empty{padding:22px 10px;color:var(--muted);text-align:center;font-size:13px}
+.result{border-radius:14px;background:#EAF5F4;padding:16px;margin-top:12px}.result strong{font-size:24px;display:block}.result p{margin:5px 0 0;color:var(--muted);font-size:13px}
+.levels{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}.level{border:1px solid var(--line);border-radius:11px;padding:9px 5px;text-align:center}.level b{font-size:20px;display:block}.level small{font-size:11px;color:var(--muted)}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.muted{color:var(--muted)}.foot{color:var(--muted);font-size:12px;margin-top:20px}
+hr{border:0;border-top:1px solid var(--line);margin:18px 0}
+@media(max-width:800px){.grid{grid-template-columns:1fr}.dashboard-grid{grid-template-columns:repeat(auto-fill,minmax(145px,1fr))}.stats{grid-template-columns:repeat(3,1fr)}.card{padding:16px}.category{grid-template-columns:minmax(0,1fr) 90px auto}}
+@media(max-width:430px){.stats{grid-template-columns:1fr 1fr}.stats .stat:last-child{grid-column:span 2}.levels{gap:4px}.level{padding:8px 2px}.level small{font-size:10px}.category{grid-template-columns:minmax(0,1fr) 83px auto}.category .weight input{width:52px}}
+
+.tabbar{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 16px;padding:5px;background:var(--soft,#EAF4F4);border-radius:12px}
+.tab-button{flex:1;min-width:100px;background:transparent;color:var(--muted);border:1px solid transparent;padding:10px 12px}
+.tab-button.active{background:var(--card,#fff);color:var(--text);border-color:var(--line);box-shadow:0 1px 3px #0000000a}
+.tab-panel[hidden],#profilePanel[hidden]{display:none!important}
+.detail-top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:0 0 14px;flex-wrap:wrap}
+.detail-top h2{margin:0}
+@media(max-width:520px){
+  body{font-size:16px}
+  header{padding:17px 15px}
+  header h1{font-size:23px}
+  header p{font-size:13px;line-height:1.4}
+  .wrap{margin:14px auto;padding:0 10px 30px}
+  .card{padding:14px;border-radius:15px}
+  .dashboard-top{align-items:stretch}
+  .dashboard-top>div:first-child{width:100%}
+  .dashboard-top .actions{width:100%;display:grid;grid-template-columns:1fr;}
+  button{min-height:44px;padding:10px 12px}
+  button.small{min-height:40px}
+  .dashboard-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+  .subject-card{padding:12px 8px;gap:8px}
+  .ring{width:88px;height:88px}
+  .subject-actions button{flex:1 1 auto}
+  .actions{gap:7px}
+  .actions button{flex:1 1 135px}
+  .row{flex-wrap:wrap}
+  .row.between{align-items:flex-start}
+  .category{grid-template-columns:minmax(0,1fr) 78px auto;gap:6px}
+  .category .weight input{width:48px;padding:8px 4px}
+  .tablewrap{margin-right:-3px}
+  th,td{padding:9px 6px}
+  .result{padding:13px}
+  .result strong{font-size:22px}
+  .notice{font-size:12px;margin-bottom:12px}
+  .tabbar{gap:4px}.tab-button{min-width:calc(50% - 4px);padding:10px 5px;min-height:44px}
+}
+@media(max-width:350px){.dashboard-grid{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}.category{grid-template-columns:minmax(0,1fr) 70px auto}.ring{width:82px;height:82px}}
+</style>
+</head>
+<body>
+<header><div class="headrow"><div class="logo">✓</div><div><h1>NotaCerta</h1><p>Regista as tuas notas. Define o teu objetivo. Planeia o próximo passo.</p></div></div></header>
+<main class="wrap">
+<div class="notice"><b>Protótipo local:</b> os dados ficam guardados neste navegador, neste dispositivo. Ainda não existem contas, sincronização nem acesso de professores. Não uses dados pessoais sensíveis nesta versão.</div>
+<section class="card" id="dashboardView">
+<div class="dashboard-top"><div><h2>As minhas disciplinas</h2><p class="sub" id="dashboardSubtitle" style="margin:4px 0 0">Média atual por disciplina</p></div><div class="actions" style="margin:0"><button class="secondary" id="dashboardSettings">Configurar ano e períodos</button><button id="dashboardAddSubject">+ Adicionar disciplina</button></div></div>
+<div class="dashboard-grid" id="dashboardSubjects" style="margin-top:18px"></div>
+</section>
+<div class="actions" id="backDashboardActions" style="margin-top:0"><button class="secondary" id="backDashboard">← Voltar às disciplinas</button></div>
+<section class="card view-hidden" id="configView"><div class="row between" style="margin-bottom:16px"><div><h2>Configuração</h2><p class="sub" style="margin:4px 0 0">Configura o ano letivo e o teu perfil escolar.</p></div><button class="secondary" id="configBackDashboard">← Voltar às disciplinas</button></div><div id="profilePanel" hidden></div></section>
+<div class="grid" id="detailView">
+<div style="grid-column:1/-1">
+ <div class="detail-top"><div><h2 id="detailSubjectTitle">Disciplina</h2><p class="sub" id="detailContext" style="margin:4px 0 0">Ano letivo · período</p></div><button class="secondary small" id="openProfileSettings">Configurar ano e períodos</button></div>
+ <nav class="tabbar" id="subjectTabs" aria-label="Secções da disciplina" role="tablist">
+  <button type="button" class="tab-button active" data-tab="summaryPanel" role="tab" aria-selected="true">Resumo</button>
+  <button type="button" class="tab-button" data-tab="assessmentsPanel" role="tab" aria-selected="false">Avaliações</button>
+  <button type="button" class="tab-button" data-tab="criteriaPanel" role="tab" aria-selected="false">Critérios</button>
+  <button type="button" class="tab-button" data-tab="perspectivePanel" role="tab" aria-selected="false">Perspetiva</button>
+ </nav>
+ <div hidden aria-hidden="true"><select id="subject"></select><button id="addSubject" type="button">Adicionar disciplina</button></div>
+ <div id="summaryPanel" class="tab-panel"></div>
+ <div id="assessmentsPanel" class="tab-panel" hidden></div>
+ <div id="criteriaPanel" class="tab-panel" hidden></div>
+ <div id="perspectivePanel" class="tab-panel" hidden></div>
+</div>
+<div class="stack">
+<section class="card">
+<div class="row between"><h2>O teu perfil escolar</h2><span class="muted">Configuração</span></div>
+<p class="sub">Estas informações servem para organizar as tuas disciplinas. Podes alterá-las quando quiseres. A escala de classificação adapta-se automaticamente ao ano selecionado.</p>
+<div class="field"><label for="academicYear">Ano letivo</label><select id="academicYear"></select></div>
+<div class="actions" style="margin-top:0"><button class="secondary small" id="addAcademicYear">+ Adicionar ano letivo</button></div>
+<div class="field"><label for="studentName">Nome do aluno (opcional)</label><input id="studentName" type="text" placeholder="O teu nome" autocomplete="name"></div>
+<div class="field"><label for="schoolName">Nome da escola (opcional)</label><input id="schoolName" type="text" placeholder="Nome da escola" autocomplete="organization"></div>
+<div class="field"><label for="schoolyear">Ano de escolaridade</label><select id="schoolyear"><option>1.º ano</option><option>2.º ano</option><option>3.º ano</option><option>4.º ano</option><option>5.º ano</option><option>6.º ano</option><option selected>7.º ano</option><option>8.º ano</option><option>9.º ano</option><option>10.º ano</option><option>11.º ano</option><option>12.º ano</option><option>Outro</option></select></div>
+<div class="field"><label for="period">Período</label><select id="period"><option>1.º período</option><option selected>2.º período</option><option>3.º período</option><option>Ano completo</option></select></div>
+</section>
+<section class="card">
+<div class="row between"><h2>Critérios de avaliação</h2><button class="small" id="addCategory">+ Adicionar</button></div>
+<p class="sub">Personaliza os nomes e os pesos. Os pesos são relativos e serão normalizados no cálculo.</p>
+<div id="categories"></div>
+<div class="row between" style="margin-top:14px"><span class="muted">Soma dos pesos</span><b id="weightTotal">100%</b></div>
+<div class="actions"><button class="secondary" id="resetCategories">Repor exemplo</button></div>
+</section>
+<section class="card">
+<div class="row between"><h2>As tuas avaliações</h2><button id="addAssessment" class="small">+ Nova nota</button></div>
+<p class="sub">Regista testes, questões-aula, observação de aula, trabalhos, atitudes e valores ou qualquer outro critério.</p>
+<div class="tablewrap"><table><thead><tr><th>Avaliação</th><th>Critério</th><th>Data</th><th id="scoreHeader">Nota (0–100)</th><th></th></tr></thead><tbody id="assessments"></tbody></table></div>
+<div id="emptyAssessments" class="empty" hidden>Ainda não há avaliações. Carrega em «Nova nota» para começar.</div>
+<div class="actions"><button class="secondary" id="exportData">Exportar cópia</button><button class="secondary" id="importButton">Importar cópia</button><input id="importFile" type="file" accept="application/json" hidden></div>
+</section>
+</div>
+<div class="stack">
+<section class="card">
+<h2>Resumo do período</h2><p class="sub">Calculado a partir das categorias que têm notas registadas.</p>
+<div class="stats">
+<div class="stat"><span>Média atual</span><strong id="currentAvg">—</strong></div>
+<div class="stat"><span id="currentLevelLabel">Nível estimado</span><strong id="currentLevel">—</strong></div>
+<div class="stat"><span>Registos</span><strong id="recordCount">0</strong></div>
+</div>
+<div class="progress"><div id="progressBar"></div></div>
+<p class="sub" id="summaryNote" style="margin:10px 0 0">Adiciona notas para veres o teu resumo.</p>
+</section>
+<section class="card">
+<h2>Define o teu objetivo</h2><p class="sub" id="objectiveIntro">Indica quantas avaliações ainda faltam em cada critério, sem contar com a observação de aula.</p>
+<div class="field"><label for="targetLevel" id="targetLevelLabel">Nível pretendido no final do período</label><select id="targetLevel"><option value="1">Nível 1</option><option value="2">Nível 2</option><option value="3">Nível 3</option><option value="4" selected>Nível 4</option><option value="5">Nível 5</option></select></div>
+<div id="remainingCounts"></div>
+<div class="result" aria-live="polite"><span class="muted" id="targetCaption">Nota média necessária</span><strong id="neededScore">—</strong><p id="neededExplanation">Introduz as notas e configura os critérios para calcular a nota necessária.</p></div>
+<hr>
+<h3>Experimenta possíveis notas</h3>
+<p class="sub">Introduz notas hipotéticas para as avaliações que faltam e vê a média final estimada. Estas notas são apenas uma simulação: não ficam guardadas no teu registo.</p>
+<div id="simulationInputs"></div>
+<div class="result" aria-live="polite"><span class="muted">Média final simulada</span><strong id="simulatedAvg">—</strong><p id="simulationExplanation">Preenche as notas acima para simular o resultado.</p><p><span class="muted">Classificação final estimada</span><br><strong id="simulatedClassification">—</strong></p></div>
+<hr>
+<div id="levelsConfig"><h3>Limites dos níveis</h3><p class="sub">Podes adaptar os intervalos à escala usada pelo teu professor. Os limites são inclusivos.</p>
+<div class="levels" id="levels"></div>
+<div class="actions"><button class="secondary" id="editLevels">Editar limites</button><button id="saveLevels" hidden>Guardar limites</button><button class="secondary" id="cancelLevels" hidden>Cancelar</button></div>
+<div id="levelEditor" hidden style="margin-top:12px"></div></div>
+</section>
+<section class="card">
+<h2>Guardar e recuperar</h2><p class="sub">Os dados são guardados automaticamente neste navegador. Exporta uma cópia de segurança regularmente, sobretudo antes de mudares de dispositivo.</p>
+<div class="actions"><button class="secondary" id="downloadBackup">Descarregar cópia JSON</button><button class="danger" id="clearAll">Apagar todos os dados</button></div>
+</section>
+</div>
+</div>
+<p class="foot">NotaCerta — protótipo de demonstração. As classificações apresentadas são estimativas matemáticas baseadas nas regras que introduzires e não substituem a avaliação oficial do professor. A versão pública precisará de testes, segurança, acessibilidade e política de privacidade.</p>
+</main>
+<script>
+const defaultCategories=[
+ {id:"tests",name:"Testes",weight:65},
+ {id:"qas",name:"Questões-aula",weight:15},
+ {id:"observation",name:"Observação de aula",weight:20}
+];
+const defaultLevels=[{level:1,min:0,max:19},{level:2,min:20,max:49},{level:3,min:50,max:69},{level:4,min:70,max:89},{level:5,min:90,max:100}];
+const initialAssessments=[
+ {id:uid(),name:"Teste 1",category:"tests",date:"2026-09-25",score:67},
+ {id:uid(),name:"Teste 2",category:"tests",date:"2026-10-09",score:70},
+ {id:uid(),name:"Teste 3",category:"tests",date:"2026-10-20",score:55},
+ {id:uid(),name:"Questão-aula 1",category:"qas",date:"2026-10-02",score:60},
+ {id:uid(),name:"Questão-aula 2",category:"qas",date:"2026-10-16",score:75},
+ {id:uid(),name:"Observação do período",category:"observation",date:"",score:70}
+];
+function uid(){return Math.random().toString(36).slice(2,10)}
+let state={schoolyear:"7.º ano",subject:"Matemática",period:"2.º período",categories:structuredClone(defaultCategories),assessments:initialAssessments,levels:structuredClone(defaultLevels)};
+const STORAGE_KEY="notacerta-data-v1";
+let database={schemaVersion:1,active:{academicYearId:"2026-2027",periodId:"p2",subjectId:"matematica"},schoolYears:[]};
+let editingLevels=false;
+const $=id=>document.getElementById(id);
+const periodNames=["1.º período","2.º período","3.º período","Ano completo"];
+function makeId(prefix){return prefix+"-"+uid()}
+function ensureAcademicYear(label="2026/2027"){let y=database.schoolYears.find(x=>x.label===label);if(!y){y={id:label.replace(/[^0-9]/g,"")||makeId("year"),label,periods:[]};database.schoolYears.push(y)}for(const name of periodNames){if(!y.periods.some(p=>p.label===name))y.periods.push({id:name==="1.º período"?"p1":name==="2.º período"?"p2":name==="3.º período"?"p3":"full-year",label:name,subjects:[]})}return y}
+function activeYear(){return database.schoolYears.find(y=>y.id===database.active.academicYearId)||database.schoolYears[0]}
+function activePeriod(){const y=activeYear();return y?.periods.find(p=>p.id===database.active.periodId)||y?.periods[0]}
+function activeSubject(){return activePeriod()?.subjects.find(x=>x.id===database.active.subjectId)||activePeriod()?.subjects[0]}
+function storeActive(){const y=activeYear(),p=activePeriod();if(!y||!p)return;if(!database.active.subjectId&&!state.subject)return;let sub=p.subjects.find(x=>x.id===database.active.subjectId);if(!sub){sub={id:database.active.subjectId||makeId("subject"),name:state.subject||"Matemática",schoolyear:state.schoolyear,categories:[],assessments:[],levels:[]};p.subjects.push(sub);database.active.subjectId=sub.id}Object.assign(sub,{name:state.subject||sub.name,schoolyear:state.schoolyear,categories:structuredClone(state.categories),assessments:structuredClone(state.assessments),levels:structuredClone(state.levels)})}
+function hydrateActive(){const y=activeYear(),p=activePeriod();if(!y||!p)return;let sub=activeSubject();if(!sub){sub={id:makeId("subject"),name:"Matemática",schoolyear:"7.º ano",categories:structuredClone(defaultCategories),assessments:[],levels:structuredClone(defaultLevels)};p.subjects.push(sub)}database.active={academicYearId:y.id,periodId:p.id,subjectId:sub.id};state={schoolyear:sub.schoolyear||"7.º ano",subject:sub.name,period:p.label,categories:structuredClone(sub.categories||defaultCategories),assessments:structuredClone(sub.assessments||[]),levels:structuredClone(sub.levels||defaultLevels)}}
+function safeNum(v){if(v===""||v===null||!Number.isFinite(Number(v)))return null;let n=Number(v);return n>=0&&n<=100?n:null}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function persist(){try{storeActive();localStorage.setItem(STORAGE_KEY,JSON.stringify(database))}catch(e){}}
+function load(){try{let raw=localStorage.getItem(STORAGE_KEY);if(raw){const d=JSON.parse(raw);if(d&&d.schemaVersion===1&&Array.isArray(d.schoolYears)&&d.schoolYears.length){database=d;hydrateActive();return}}const legacy=JSON.parse(localStorage.getItem("notacerta-prototype-v1"));const y=ensureAcademicYear("2026/2027");const periodName=legacy?.period||"2.º período";const period=y.periods.find(p=>p.label===periodName)||y.periods[1];const sub={id:"matematica",name:legacy?.subject||"Matemática",schoolyear:legacy?.schoolyear||"7.º ano",categories:Array.isArray(legacy?.categories)?legacy.categories:structuredClone(defaultCategories),assessments:Array.isArray(legacy?.assessments)?legacy.assessments:[],levels:Array.isArray(legacy?.levels)?legacy.levels:structuredClone(defaultLevels)};period.subjects.push(sub);database.active={academicYearId:y.id,periodId:period.id,subjectId:sub.id};hydrateActive();persist()}catch(e){const y=ensureAcademicYear("2026/2027");const p=y.periods.find(x=>x.label==="2.º período");p.subjects.push({id:"matematica",name:"Matemática",schoolyear:"7.º ano",categories:structuredClone(defaultCategories),assessments:[],levels:structuredClone(defaultLevels)});database.active={academicYearId:y.id,periodId:p.id,subjectId:"matematica"};hydrateActive()}}
+function isSecondary(){return /^(10|11|12)\.º ano$/.test(state.schoolyear)}
+function displayScore(n){return fmt(isSecondary()?n/5:n)}
+function parseEnteredScore(v){const n=safeNum(v);return n===null?null:(isSecondary()?n*5:n)}
+function scoreMax(){return isSecondary()?20:100}
+function levelFor(n){
+ if(isSecondary())return "—";
+ // A classificação por níveis é feita sobre a média arredondada à unidade:
+ // evita lacunas entre, por exemplo, o máximo 69 e o mínimo 70.
+ const value=Math.round(Number(n));
+ const levels=[...state.levels].sort((a,b)=>Number(a.min)-Number(b.min));
+ const exact=levels.find(l=>value>=Number(l.min)&&value<=Number(l.max));
+ if(exact)return exact.level;
+ // Fallback para configurações com intervalos incompletos: usa o nível
+ // cujo mínimo é o maior que não ultrapassa a média arredondada.
+ const eligible=levels.filter(l=>value>=Number(l.min));
+ return eligible.length?eligible[eligible.length-1].level:"—";
+}
+function fmt(n){return Number.isFinite(n)?n.toLocaleString("pt-PT",{maximumFractionDigits:1}):"—"}
+function averages(){
+ const cats=state.categories.map(c=>{const scores=state.assessments.filter(a=>a.category===c.id).map(a=>safeNum(a.score)).filter(v=>v!==null);return {...c,avg:scores.length?scores.reduce((a,b)=>a+b,0)/scores.length:null,count:scores.length}});
+ const active=cats.filter(c=>c.avg!==null&&Number(c.weight)>0);
+ const total=active.reduce((s,c)=>s+Number(c.weight),0);
+ return {cats,active,total,mean:total?active.reduce((s,c)=>s+c.avg*Number(c.weight),0)/total:null};
+}
+function renderCategories(){
+ $("categories").innerHTML=state.categories.map(c=>`<div class="category" data-id="${escapeHtml(c.id)}"><input aria-label="Nome do critério" class="catname" value="${escapeHtml(c.name)}"><div class="weight"><input aria-label="Peso percentual" class="catweight" type="number" min="0" max="100" step="1" value="${Number(c.weight)}"><span>%</span></div><button class="danger small removeCat" title="Remover critério" ${state.categories.length<=1?"disabled":""}>×</button></div>`).join("");
+ $("categories").querySelectorAll(".category").forEach(el=>{
+  const c=state.categories.find(x=>x.id===el.dataset.id);
+  el.querySelector(".catname").addEventListener("change",e=>{c.name=e.target.value.trim()||"Critério";renderAll()});
+  el.querySelector(".catweight").addEventListener("change",e=>{c.weight=Math.max(0,Math.min(100,Number(e.target.value)||0));renderAll()});
+  el.querySelector(".removeCat").addEventListener("click",()=>{if(state.categories.length<=1)return;state.assessments=state.assessments.filter(a=>a.category!==c.id);state.categories=state.categories.filter(x=>x.id!==c.id);renderAll()});
+ });
+ $("weightTotal").textContent=state.categories.reduce((s,c)=>s+Number(c.weight||0),0)+"%";
+}
+function renderAssessments(){
+ const body=$("assessments");
+ body.innerHTML=state.assessments.map(a=>`<tr data-id="${escapeHtml(a.id)}"><td><input class="name" aria-label="Nome da avaliação" value="${escapeHtml(a.name)}"></td><td><select class="cat" aria-label="Critério">${state.categories.map(c=>`<option value="${escapeHtml(c.id)}" ${a.category===c.id?"selected":""}>${escapeHtml(c.name)}</option>`).join("")}</select></td><td><input class="date" aria-label="Data" type="date" value="${escapeHtml(a.date||"")}"></td><td><input class="score" aria-label="Nota de 0 a ${scoreMax()}" type="number" min="0" max="${scoreMax()}" step="0.1" value="${a.score===null?"":escapeHtml(displayScore(a.score))}" placeholder="—"></td><td><button class="danger small del" aria-label="Apagar avaliação">×</button></td></tr>`).join("");
+ $("emptyAssessments").hidden=state.assessments.length!==0;
+ body.querySelectorAll("tr").forEach(tr=>{
+  const a=state.assessments.find(x=>x.id===tr.dataset.id);
+  tr.querySelector(".name").addEventListener("change",e=>{a.name=e.target.value;persist()});
+  tr.querySelector(".cat").addEventListener("change",e=>{a.category=e.target.value;renderAll()});
+  tr.querySelector(".date").addEventListener("change",e=>{a.date=e.target.value;persist()});
+  tr.querySelector(".score").addEventListener("change",e=>{const n=safeNum(e.target.value);a.score=n===null?null:(isSecondary()?n*5:n);renderAll()});
+  tr.querySelector(".del").addEventListener("click",()=>{state.assessments=state.assessments.filter(x=>x.id!==a.id);renderAll()});
+ });
+}
+function renderLevels(){
+ $("levels").innerHTML=state.levels.map(l=>`<div class="level"><b>${l.level}</b><small>${l.min}–${l.max}</small></div>`).join("");
+ $("levelEditor").innerHTML=state.levels.map(l=>`<div class="row" style="margin:7px 0"><b style="width:65px">Nível ${l.level}</b><input type="number" min="0" max="100" data-level="${l.level}" data-bound="min" value="${l.min}" aria-label="Mínimo nível ${l.level}"><span>até</span><input type="number" min="0" max="100" data-level="${l.level}" data-bound="max" value="${l.max}" aria-label="Máximo nível ${l.level}"></div>`).join("");
+}
+function renderSelectors(){
+ const oldCounts=Object.fromEntries([...document.querySelectorAll(".remaining-count")].map(x=>[x.dataset.category,x.value]));
+ const eligible=state.categories.filter(c=>!/(observa|observation)/i.test(c.id+" "+c.name));
+ $("remainingCounts").innerHTML=eligible.map(c=>`<div class="field"><label for="count-${escapeHtml(c.id)}">Quantas avaliações de «${escapeHtml(c.name)}» faltam?</label><input class="remaining-count" id="count-${escapeHtml(c.id)}" data-category="${escapeHtml(c.id)}" type="number" min="0" max="20" step="1" value="${escapeHtml(oldCounts[c.id]??(c.id==="tests"||/teste/i.test(c.name)?2:0))}"></div>`).join("");
+ $("remainingCounts").querySelectorAll("input").forEach(x=>x.addEventListener("input",()=>{renderSimulation();calcNeeded()}));
+}
+function updateScaleUI(){
+ const secondary=isSecondary();
+ $("scoreHeader").textContent=secondary?"Nota (0–20)":"Nota (0–100)";
+ $("currentLevelLabel").textContent=secondary?"Classificação estimada":"Nível estimado";
+ $("targetLevelLabel").textContent=secondary?"Classificação pretendida no final do período":"Nível pretendido no final do período";
+ $("objectiveIntro").textContent=secondary?"Indica quantas avaliações ainda faltam em cada critério, sem contar com a observação de aula.":"Indica quantas avaliações ainda faltam em cada critério, sem contar com a observação de aula.";
+ $("levelsConfig").hidden=secondary;
+ const target=$("targetLevel"),old=target.value;
+ if(secondary){
+  target.innerHTML=Array.from({length:21},(_,i)=>`<option value="${i}">${i} valores</option>`).join("");
+  target.value=String(Math.min(20,Math.max(0,old===""?16:Number(old))));
+  if(old==="4")target.value="16";
+ }else{
+  target.innerHTML=[1,2,3,4,5].map(n=>`<option value="${n}">Nível ${n}</option>`).join("");
+  target.value=[1,2,3,4,5].includes(Number(old))?old:"4";
+ }
+}
+function calcNeeded(){
+ const {cats,active,total,mean}=averages();
+ $("recordCount").textContent=state.assessments.filter(a=>safeNum(a.score)!==null).length;
+ $("currentAvg").textContent=mean===null?"—":(displayScore(mean)+(isSecondary()?" / 20":" / 100"));
+ $("currentLevel").textContent=mean===null?"—":(isSecondary()?`${Math.round(mean/5)} valores`:levelFor(mean));
+ $("progressBar").style.width=(mean===null?0:Math.max(0,Math.min(100,mean)))+"%";
+ $("summaryNote").textContent=mean===null?"Adiciona notas válidas para veres o teu resumo.":`A média considera ${active.length} critério(s) com notas, normalizando os respetivos pesos.`;
+ const target=Number($("targetLevel").value),bound=isSecondary()?{level:target,min:target*5,max:target*5}:state.levels.find(l=>l.level===target);
+ const counts=[...document.querySelectorAll(".remaining-count")].map(x=>({id:x.dataset.category,count:Math.max(0,Math.floor(Number(x.value)||0))}));
+ const selected=counts.find(x=>x.count>0);
+ const cat=state.categories.find(c=>c.id===(selected?.id||counts[0]?.id));
+ const count=selected?.count||0;
+ if(count===0){$("neededScore").textContent="—";$("neededExplanation").textContent="Indica pelo menos uma avaliação em falta para calcular a nota necessária.";return}
+ if(!cat||!bound||Number(cat.weight)<=0){$("neededScore").textContent="Configuração incompleta";$("neededExplanation").textContent="Escolhe um critério com peso superior a zero e configura os pesos.";return}
+ const all=state.categories.map(c=>{
+  const sc=state.assessments.filter(a=>a.category===c.id).map(a=>safeNum(a.score)).filter(v=>v!==null);
+  return {...c,scores:sc,avg:sc.length?sc.reduce((a,b)=>a+b,0)/sc.length:null};
+ });
+ const others=all.filter(c=>c.id!==cat.id&&c.avg!==null&&Number(c.weight)>0);
+ const denominator=others.reduce((s,c)=>s+Number(c.weight),0)+Number(cat.weight);
+ const currentScores=all.find(c=>c.id===cat.id).scores;
+ if(denominator<=0){$("neededScore").textContent="—";$("neededExplanation").textContent="Adiciona notas às outras categorias ou ajusta os pesos.";return}
+ const targetMean=Number(bound.min);
+ // Existing category average plus N remaining equally weighted assessments. Categories without any scores are omitted until they have scores.
+ const fixedContribution=others.reduce((s,c)=>s+c.avg*Number(c.weight),0);
+ const existingContribution=currentScores.length?currentScores.reduce((a,b)=>a+b,0):0;
+ const existingCount=currentScores.length;
+ // To reach target, the target category's future average must satisfy weighted mean; target category becomes active even if empty.
+ const requiredCategoryAvg=(targetMean*denominator-fixedContribution)/Number(cat.weight);
+ const neededRaw=(requiredCategoryAvg*(existingCount+count)-existingContribution)/count;
+ const needed=Math.abs(neededRaw-Math.round(neededRaw))<1e-8?Math.round(neededRaw):neededRaw;
+ if(needed<=0){$("neededScore").textContent="Já estás no objetivo";$("neededExplanation").textContent=isSecondary()?`Com os dados registados, já atinges a classificação pretendida de ${target} valores, assumindo que os outros critérios se mantêm.`:`Com os dados registados, não precisas de uma nota positiva mínima para alcançar o limite inferior do nível ${target}, assumindo que os outros critérios se mantêm.`}
+ else if(needed>100){$("neededScore").textContent="Objetivo impossível";$("neededExplanation").textContent=`Seriam necessários ${displayScore(needed)} valores de média nas ${count} avaliação(ões) restante(s) de «${cat.name}». Revê os pesos ou os critérios introduzidos.`}
+ else {$("neededScore").textContent=displayScore(needed)+(isSecondary()?" valores":"%");$("neededExplanation").textContent=isSecondary()?`Precisas desta média (em 0–20 valores) nas ${count} avaliação(ões) que faltam em «${cat.name}» para atingir a classificação pretendida de ${target} valores. Assume que as outras categorias mantêm a média atual.`:`Precisas desta média nas ${count} avaliação(ões) que faltam em «${cat.name}» para atingir pelo menos ${bound.min}%. Assume que as outras categorias mantêm a média atual.`}
+}
+function renderDashboard(){
+ const y=activeYear(), p=activePeriod();
+ const names=[];
+ (y?.periods||[]).forEach(period=>(period.subjects||[]).forEach(sub=>{if(!names.some(n=>n.toLowerCase()===sub.name.toLowerCase()))names.push(sub.name)}));
+ $("dashboardSubtitle").textContent=`${y?.label||"Ano letivo"} · ${p?.label||state.period} · média atual por disciplina`;
+ if(!names.length){$("dashboardSubjects").innerHTML='<div class="subject-empty" style="grid-column:1/-1"><b>Ainda não tens disciplinas.</b><p>Adiciona as disciplinas que vais frequentar para começares a organizar o teu ano.</p></div>';return}
+ $("dashboardSubjects").innerHTML=names.map(name=>{
+  const sub=(p?.subjects||[]).find(x=>x.name.toLowerCase()===name.toLowerCase())||(y?.periods||[]).flatMap(x=>x.subjects||[]).find(x=>x.name.toLowerCase()===name.toLowerCase());
+  let mean=null;
+  if(sub){const cats=(sub.categories||[]).map(c=>{const scores=(sub.assessments||[]).filter(a=>a.category===c.id).map(a=>safeNum(a.score)).filter(v=>v!==null);return {...c,avg:scores.length?scores.reduce((a,b)=>a+b,0)/scores.length:null}}).filter(c=>c.avg!==null&&Number(c.weight)>0);const total=cats.reduce((sum,c)=>sum+Number(c.weight),0);if(total)mean=cats.reduce((sum,c)=>sum+c.avg*Number(c.weight),0)/total;}
+  const secondary=isSecondaryForYear(sub?.schoolyear||state.schoolyear);
+  const max=secondary?20:5;
+  let goal=sub?.goal==null?'':String(sub.goal);
+  if(!secondary&&goal!==''&&Number(goal)>5){const legacyPct=Number(goal);const levels=sub?.levels||defaultLevels;const converted=levels.find(l=>legacyPct>=Number(l.min)&&legacyPct<=Number(l.max));goal=String(converted?.level??(legacyPct>=90?5:legacyPct>=70?4:legacyPct>=50?3:legacyPct>=20?2:1));}
+  const shown=mean===null?'—':(secondary?String(Math.round(mean/5)):`${fmt(mean)}%`);
+  const goalLevel=goal===''?null:Number(goal);
+  const goalLevels=Array.isArray(sub?.levels)&&sub.levels.length?sub.levels:defaultLevels;
+  const goalBound=goalLevel===null?null:goalLevels.find(l=>Number(l.level)===goalLevel)||defaultLevels.find(l=>Number(l.level)===goalLevel)||null;
+  const goalRaw=goalLevel===null?null:(secondary?goalLevel*5:Number(goalBound?.min??null));
+  let color='#9aa8a1';
+  if(goalRaw!==null&&Number.isFinite(goalRaw)&&mean!==null){
+   if(secondary){
+    const currentGrade=Math.max(0,Math.min(20,Math.round(mean/5)));
+    const difference=currentGrade-goalLevel;
+    if(currentGrade===20)color='#166534';
+    else if(difference>=3)color='#166534';
+    else if(difference===2)color='#22c55e';
+    else if(difference===1)color='#4ade80';
+    else if(difference===0)color='#86efac';
+    else if(difference===-1)color='#facc15';
+    else if(difference===-2)color='#fca5a5';
+    else if(difference===-3)color='#f87171';
+    else if(difference===-4)color='#dc2626';
+    else if(difference===-5)color='#991b1b';
+    else color='#7f1d1d';
+   }else{
+    const levels=[...(sub?.levels||defaultLevels)].sort((a,b)=>Number(a.min)-Number(b.min));
+    const roundedMean=Math.round(mean);
+    const current=levels.find(l=>roundedMean>=Number(l.min)&&roundedMean<=Number(l.max));
+    const currentLevel=current?Number(current.level):null;
+    if(currentLevel===5)color='#166534';
+    else if(currentLevel!==null){
+     const difference=currentLevel-goalLevel;
+     if(difference>0)color='#166534';
+     else if(difference===0)color='#86efac';
+     else if(difference===-1)color='#facc15';
+     else if(difference===-2)color='#fca5a5';
+     else color='#991b1b';
+    }
+   }
+  }
+  const pct=mean===null?0:Math.max(0,Math.min(100,mean));
+  const ring=mean===null?'':`<circle cx="50" cy="50" r="40" fill="none" stroke="${color}" stroke-width="8" stroke-linecap="round" stroke-dasharray="${pct*2.5133} 251.33" transform="rotate(-90 50 50)"/>`;
+  const valueLabel=secondary?'nota final estimada':'média atual';
+  return `<article class="card subject-card"><svg class="ring" viewBox="0 0 100 100" role="img" aria-label="${escapeHtml(name)}: ${mean===null?'sem média':`${valueLabel} ${shown}`} "><circle cx="50" cy="50" r="40" fill="none" stroke="#e5ece8" stroke-width="8"/>${ring}<text x="50" y="56" text-anchor="middle" fill="currentColor" font-size="${mean===null?27:22}" font-weight="650">${shown}</text></svg><h3>${escapeHtml(name)}</h3><span class="muted" style="font-size:12px">${mean===null?'Sem avaliações':(secondary?'Nota final estimada (valores)':'Média atual em percentagem')}</span><div class="field goal-field"><label for="goal-${escapeHtml(sub?.id||name)}">Objetivo anual (${secondary?'0–20 valores':'nível 1–5'})</label><input class="annual-goal" id="goal-${escapeHtml(sub?.id||name)}" data-name="${escapeHtml(name)}" type="number" min="${secondary?0:1}" max="${max}" step="1" placeholder="Definir objetivo" value="${escapeHtml(goal)}"></div><div class="subject-actions"><button class="secondary small openSubject" data-name="${escapeHtml(name)}">Abrir disciplina</button><button class="danger small deleteSubject" data-name="${escapeHtml(name)}">Eliminar</button></div></article>`;
+ }).join('');
+ $("dashboardSubjects").querySelectorAll('.openSubject').forEach(btn=>btn.addEventListener('click',()=>openSubjectFromDashboard(btn.dataset.name)));
+ $("dashboardSubjects").querySelectorAll('.annual-goal').forEach(input=>input.addEventListener('change',()=>{
+  const name=input.dataset.name, val=input.value.trim(), sub=activeYear().periods.flatMap(x=>x.subjects||[]).find(x=>x.name.toLowerCase()===name.toLowerCase());
+  const secondary=isSecondaryForYear(sub?.schoolyear||state.schoolyear), min=secondary?0:1, max=secondary?20:5;
+  if(val!==''&&(!Number.isFinite(Number(val))||!Number.isInteger(Number(val))||Number(val)<min||Number(val)>max)){alert(secondary?'O objetivo deve estar entre 0 e 20 valores.':'No ensino básico, o objetivo deve ser um nível inteiro entre 1 e 5.');renderDashboard();return}
+  const goal=val===''?null:Number(val);
+  activeYear().periods.forEach(period=>(period.subjects||[]).forEach(x=>{if(x.name.toLowerCase()===name.toLowerCase())x.goal=goal}));
+  persist();renderDashboard();
+ }));
+ $("dashboardSubjects").querySelectorAll('.deleteSubject').forEach(btn=>btn.addEventListener('click',()=>{
+  const name=btn.dataset.name;
+  if(!confirm(`Eliminar a disciplina «${name}» do ano letivo ${activeYear()?.label||''}? Serão eliminados os registos, critérios e avaliações desta disciplina em todos os períodos deste ano letivo. Esta ação não pode ser desfeita.`))return;
+  const y=activeYear();
+  y.periods.forEach(period=>{period.subjects=(period.subjects||[]).filter(x=>x.name.toLowerCase()!==name.toLowerCase())});
+  const p=activePeriod();database.active.subjectId=p?.subjects[0]?.id||null;
+  if(database.active.subjectId)hydrateActive();else {state={schoolyear:state.schoolyear,subject:'',period:p?.label||state.period,categories:structuredClone(defaultCategories),assessments:[],levels:structuredClone(defaultLevels)}}
+  persist();renderDashboard();
+ }));
+}
+function isSecondaryForYear(year){return /^(10|11|12)\.º ano$/.test(year||"")}
+function openSubjectFromDashboard(name){
+ const y=activeYear(),p=activePeriod();let sub=p.subjects.find(x=>x.name.toLowerCase()===name.toLowerCase());
+ if(!sub){const template=(y.periods.flatMap(x=>x.subjects||[]).find(x=>x.name.toLowerCase()===name.toLowerCase()))||null;sub={id:makeId("subject"),name,schoolyear:template?.schoolyear||state.schoolyear,categories:structuredClone(template?.categories||defaultCategories),assessments:[],levels:structuredClone(template?.levels||defaultLevels),goal:template?.goal??null};p.subjects.push(sub)}
+ database.active.subjectId=sub.id;hydrateActive();renderAll();showDetails();
+}
+function showDetails(){$("dashboardView").classList.add("view-hidden");$("configView").classList.add("view-hidden");$("detailView").classList.remove("view-hidden");$("backDashboardActions").classList.remove("view-hidden");if(typeof activateSubjectTab==="function")activateSubjectTab("summaryPanel");}
+function showDashboard(){persist();$("dashboardView").classList.remove("view-hidden");$("detailView").classList.add("view-hidden");$("configView").classList.add("view-hidden");$("profilePanel").hidden=true;$("backDashboardActions").classList.add("view-hidden");renderDashboard();}
+function renderProfileSelectors(){
+ const y=activeYear(),p=activePeriod(),sub=activeSubject();
+ $("academicYear").innerHTML=database.schoolYears.map(x=>`<option value="${escapeHtml(x.id)}">${escapeHtml(x.label)}</option>`).join("");if(y)$("academicYear").value=y.id;
+ $("period").value=p?.label||state.period;
+ $("subject").innerHTML=(p?.subjects||[]).map(x=>`<option value="${escapeHtml(x.id)}">${escapeHtml(x.name)}</option>`).join("");if(sub)$("subject").value=sub.id;
+ $("schoolyear").value=state.schoolyear;
+}
+function renderSimulation(){
+ const oldValues=Object.fromEntries([...$("simulationInputs").querySelectorAll("input")].map(x=>[x.dataset.key,x.value]));
+ const counts=[...document.querySelectorAll(".remaining-count")].map(x=>({id:x.dataset.category,count:Math.max(0,Math.min(20,Math.floor(Number(x.value)||0)))}));
+ let html="";
+ counts.forEach(item=>{const cat=state.categories.find(c=>c.id===item.id);for(let i=0;i<item.count;i++){const key=`${item.id}-${i}`;html+=`<div class="field"><label for="sim-${escapeHtml(key)}">${escapeHtml(cat?.name||"Avaliação")} ${i+1} — nota hipotética (0–${scoreMax()})</label><input id="sim-${escapeHtml(key)}" data-key="${escapeHtml(key)}" data-category="${escapeHtml(item.id)}" class="sim-score" type="number" min="0" max="${scoreMax()}" step="0.1" placeholder="Introduz uma nota" value="${escapeHtml(oldValues[key]||"")}"></div>`;}});
+ $("simulationInputs").innerHTML=html || '<p class="sub">Indica acima quantas avaliações ainda faltam para abrir os campos de simulação.</p>';
+ $("simulationInputs").querySelectorAll("input").forEach(input=>input.addEventListener("input",calcSimulation));
+ calcSimulation();
+}
+function calcSimulation(){
+ const inputs=[...$("simulationInputs").querySelectorAll("input")];
+ const values=inputs.map(input=>input.value===""?null:(Number.isFinite(Number(input.value))&&Number(input.value)>=0&&Number(input.value)<=scoreMax()?Number(input.value):null));
+ if(!inputs.length||values.some(v=>v===null)){
+  $("simulatedAvg").textContent="—";
+  $("simulationExplanation").textContent=`Preenche todas as notas hipotéticas com valores entre 0 e ${scoreMax()} para veres a média final estimada.`;
+  $("simulatedClassification").textContent="—";
+  return;
+ }
+ const categories=state.categories.map(c=>{
+  const existing=state.assessments.filter(a=>a.category===c.id).map(a=>safeNum(a.score)).filter(v=>v!==null);
+  const simulated=inputs.filter(input=>input.dataset.category===c.id).map(input=>input.value===""?null:Number(input.value)).filter(v=>v!==null&&Number.isFinite(v)&&v>=0&&v<=scoreMax()).map(v=>isSecondary()?v*5:v);
+  const scores=existing.concat(simulated);
+  return {...c,avg:scores.length?scores.reduce((a,b)=>a+b,0)/scores.length:null};
+ }).filter(c=>c.avg!==null&&Number(c.weight)>0);
+ const weightTotal=categories.reduce((sum,c)=>sum+Number(c.weight),0);
+ if(!weightTotal){$("simulatedAvg").textContent="—";$("simulationExplanation").textContent="Adiciona pelo menos um critério com peso superior a zero.";$("simulatedClassification").textContent="—";return}
+ const mean=categories.reduce((sum,c)=>sum+c.avg*Number(c.weight),0)/weightTotal;
+ $("simulatedAvg").textContent=displayScore(mean)+(isSecondary()?" / 20":" / 100");
+ const classification=isSecondary()?`${Math.round(mean/5)} valores (0–20)`: `Nível ${levelFor(mean)}`;
+ $("simulatedClassification").textContent=classification;
+ $("simulationExplanation").textContent="A simulação não altera as notas registadas.";
+}
+function renderAll(){ renderProfileSelectors();updateScaleUI();renderCategories();renderAssessments();renderSelectors();renderLevels();renderSimulation();calcNeeded();persist();renderDashboard()}
+function download(filename,content,type){const blob=new Blob([content],{type});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=filename;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+$("schoolyear").addEventListener("change",e=>{
+ const selectedYear=e.target.value;
+ state.schoolyear=selectedYear;
+ // O ano de escolaridade pertence ao perfil do aluno: atualiza todas as disciplinas
+ // e todos os períodos do ano letivo ativo, sem tocar nas notas, avaliações ou critérios.
+ const y=activeYear();
+ (y?.periods||[]).forEach(period=>(period.subjects||[]).forEach(sub=>{sub.schoolyear=selectedYear}));
+ renderAll();
+});
+$("academicYear").addEventListener("change",e=>{persist();database.active.academicYearId=e.target.value;const y=activeYear();const p=y.periods.find(x=>x.label===state.period)||y.periods[1]||y.periods[0];database.active.periodId=p.id;database.active.subjectId=p.subjects[0]?.id||null;hydrateActive();renderAll()});
+$("addAcademicYear").addEventListener("click",()=>{const label=prompt("Ano letivo (ex.: 2027/2028):");if(!label||!label.trim())return;const normalized=label.trim();if(database.schoolYears.some(y=>y.label.toLowerCase()===normalized.toLowerCase())){alert("Esse ano letivo já existe.");return}persist();const y=ensureAcademicYear(normalized);database.active.academicYearId=y.id;const p=y.periods.find(x=>x.label===state.period)||y.periods[1];database.active.periodId=p.id;database.active.subjectId=p.subjects[0]?.id||null;hydrateActive();renderAll()});
+$("subject").addEventListener("change",e=>{persist();database.active.subjectId=e.target.value;hydrateActive();renderAll()});
+$("period").addEventListener("change",e=>{persist();const y=activeYear();const p=y.periods.find(x=>x.label===e.target.value);database.active.periodId=p.id;database.active.subjectId=p.subjects[0]?.id||null;hydrateActive();renderAll()});
+$("addSubject").addEventListener("click",()=>{const name=prompt("Nome da nova disciplina:");if(!name||!name.trim())return;const normalized=name.trim();const y=activeYear();if(y.periods.some(p=>p.subjects.some(s=>s.name.toLowerCase()===normalized.toLowerCase()))){alert("Já existe uma disciplina com esse nome neste ano letivo.");return}persist();let chosen=null;y.periods.forEach(p=>{const sub={id:makeId("subject"),name:normalized,schoolyear:state.schoolyear,categories:structuredClone(defaultCategories),assessments:[],levels:structuredClone(defaultLevels),goal:null};p.subjects.push(sub);if(p.id===database.active.periodId)chosen=sub});if(chosen)database.active.subjectId=chosen.id;hydrateActive();renderAll();showDetails()});
+$("addCategory").addEventListener("click",()=>{const name=prompt("Nome do novo critério (ex.: Atitudes e valores):");if(!name||!name.trim())return;state.categories.push({id:uid(),name:name.trim(),weight:0});renderAll()});
+$("resetCategories").addEventListener("click",()=>{if(!confirm("Repor os três critérios de base (Testes 65%, Questões-aula 15%, Observação de aula 20%)? As avaliações atuais serão mantidas quando possível."))return;const old=state.assessments;state.categories=structuredClone(defaultCategories);state.assessments=old.map(a=>state.categories.some(c=>c.id===a.category)?a:{...a,category:"tests"});renderAll()});
+$("addAssessment").addEventListener("click",()=>{if(!state.categories.length)return;state.assessments.push({id:uid(),name:"Nova avaliação",category:state.categories[0].id,date:new Date().toISOString().slice(0,10),score:null});renderAll();const last=$("assessments").lastElementChild;last?.querySelector(".name")?.focus()});
+$("targetLevel").addEventListener("change",calcNeeded);
+
+$("backDashboard").addEventListener("click",showDashboard);
+$("dashboardAddSubject").addEventListener("click",()=>$("addSubject").click());
+
+$("editLevels").addEventListener("click",()=>{editingLevels=true;$("levelEditor").hidden=false;$("saveLevels").hidden=false;$("cancelLevels").hidden=false;$("editLevels").hidden=true});
+$("cancelLevels").addEventListener("click",()=>{editingLevels=false;renderLevels();$("levelEditor").hidden=true;$("saveLevels").hidden=true;$("cancelLevels").hidden=true;$("editLevels").hidden=false});
+$("saveLevels").addEventListener("click",()=>{const inputs=[...$("levelEditor").querySelectorAll("input")];const levels=state.levels.map(l=>({...l}));for(const inp of inputs){const l=levels.find(x=>x.level===Number(inp.dataset.level));l[inp.dataset.bound]=Math.max(0,Math.min(100,Number(inp.value)||0))}levels.sort((a,b)=>a.level-b.level);const valid=levels[0].min===0&&levels[levels.length-1].max===100&&levels.every((l,i)=>l.min<=l.max&&(i===0||levels[i-1].max+1===l.min));if(!valid){alert("Os intervalos devem começar em 0, terminar em 100, não se sobrepor e não deixar lacunas. Ex.: 0–19, 20–49, ...");return}state.levels=levels;editingLevels=false;$("levelEditor").hidden=true;$("saveLevels").hidden=true;$("cancelLevels").hidden=true;$("editLevels").hidden=false;renderAll()});
+function exportJSON(){persist();download("notacerta-copia.json",JSON.stringify(database,null,2),"application/json")}
+$("exportData").addEventListener("click",exportJSON);$("downloadBackup").addEventListener("click",exportJSON);
+$("importButton").addEventListener("click",()=>$("importFile").click());
+$("importFile").addEventListener("change",async e=>{const f=e.target.files[0];if(!f)return;try{const d=JSON.parse(await f.text());if(d?.schemaVersion===1&&Array.isArray(d.schoolYears)&&d.schoolYears.length){database=d;hydrateActive();renderAll();alert("Cópia importada.")}else if(Array.isArray(d.categories)&&Array.isArray(d.assessments)&&Array.isArray(d.levels)){database={schemaVersion:1,active:{academicYearId:"20262027",periodId:"p2",subjectId:"matematica"},schoolYears:[]};const y=ensureAcademicYear("2026/2027");const p=y.periods.find(x=>x.label===(d.period||"2.º período"))||y.periods[1];p.subjects.push({id:"matematica",name:d.subject||"Matemática",schoolyear:d.schoolyear||"7.º ano",categories:d.categories,assessments:d.assessments,levels:d.levels});database.active={academicYearId:y.id,periodId:p.id,subjectId:"matematica"};hydrateActive();renderAll();alert("Cópia antiga importada e convertida.")}else throw new Error()}catch(err){alert("Não foi possível importar. Escolhe um ficheiro JSON exportado pelo NotaCerta.")}e.target.value=""});
+$("clearAll").addEventListener("click",()=>{if(!confirm("Apagar todas as notas e configurações guardadas neste navegador? Esta ação não pode ser desfeita. Exporta primeiro uma cópia se quiseres guardar os dados."))return;localStorage.removeItem("notacerta-prototype-v1");localStorage.removeItem(STORAGE_KEY);database={schemaVersion:1,active:{academicYearId:"20262027",periodId:"p2",subjectId:"matematica"},schoolYears:[]};const y=ensureAcademicYear("2026/2027");const p=y.periods.find(x=>x.label==="2.º período");p.subjects.push({id:"matematica",name:"Matemática",schoolyear:"7.º ano",categories:structuredClone(defaultCategories),assessments:[],levels:structuredClone(defaultLevels)});database.active={academicYearId:y.id,periodId:p.id,subjectId:"matematica"};hydrateActive();renderAll()});
+function setupSubjectTabs(){
+ const detail=$('detailView');
+ const stacks=[...detail.querySelectorAll(':scope > .stack')];
+ const left=stacks[0],right=stacks[1];
+ const profile=left.querySelector('section.card');
+ const criteria=left.querySelectorAll('section.card')[1];
+ const assessments=left.querySelectorAll('section.card')[2];
+ const summary=right.querySelectorAll('section.card')[0];
+ const perspective=right.querySelectorAll('section.card')[1];
+ const backup=right.querySelectorAll('section.card')[2];
+ $('profilePanel').append(profile,backup);
+ $('summaryPanel').append(summary);
+ $('assessmentsPanel').append(assessments);
+ $('criteriaPanel').append(criteria,$('levelsConfig'));
+ $('perspectivePanel').append(perspective);
+ stacks.forEach(x=>x.remove());
+ $('subjectTabs').querySelectorAll('[data-tab]').forEach(btn=>btn.addEventListener('click',()=>activateSubjectTab(btn.dataset.tab)));
+ $('openProfileSettings').addEventListener('click',showConfiguration);
+}
+function activateSubjectTab(id){
+ $('profilePanel').hidden=true; $('subjectTabs').hidden=false;
+ ['summaryPanel','assessmentsPanel','criteriaPanel','perspectivePanel'].forEach(panelId=>$(panelId).hidden=panelId!==id);
+ $('subjectTabs').querySelectorAll('[data-tab]').forEach(btn=>{const active=btn.dataset.tab===id;btn.classList.toggle('active',active);btn.setAttribute('aria-selected',String(active))});
+ $('openProfileSettings').textContent='Configurar ano e períodos';$('openProfileSettings').onclick=null;
+}
+function updateSubjectHeader(){const sub=activeSubject(),year=activeYear(),period=activePeriod();$('detailSubjectTitle').textContent=sub?.name||state.subject||'Disciplina';$('detailContext').textContent=`${year?.label||'Ano letivo'} · ${period?.label||state.period||''} · ${state.schoolyear||''}`;}
+const originalRenderAll=renderAll;
+renderAll=function(){originalRenderAll();if($('detailSubjectTitle'))updateSubjectHeader()};
+setupSubjectTabs();
+function showConfiguration(){
+ persist();
+ $('dashboardView').classList.add('view-hidden');
+ $('detailView').classList.add('view-hidden');
+ $('backDashboardActions').classList.add('view-hidden');
+ $('configView').classList.remove('view-hidden');
+ $('profilePanel').hidden=false;
+ $('subjectTabs').hidden=true;
+ ['summaryPanel','assessmentsPanel','criteriaPanel','perspectivePanel'].forEach(id=>$(id).hidden=true);
+}
+$('dashboardSettings').addEventListener('click',showConfiguration);
+$('configBackDashboard').addEventListener('click',showDashboard);
+
+load();
+try { const profile=JSON.parse(localStorage.getItem("notacerta-user-profile-v1")||"{}"); $("studentName").value=profile.studentName||""; $("schoolName").value=profile.schoolName||""; } catch(e) {}
+["studentName","schoolName"].forEach(id=>$(id).addEventListener("input",()=>{localStorage.setItem("notacerta-user-profile-v1",JSON.stringify({studentName:$("studentName").value,schoolName:$("schoolName").value}));}));
+renderAll();showDashboard();
+</script>
+</body>
+</html>
