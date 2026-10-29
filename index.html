@@ -63,13 +63,41 @@ hr{border:0;border-top:1px solid var(--line);margin:18px 0}
   .tabbar{gap:4px}.tab-button{min-width:calc(50% - 4px);padding:10px 5px;min-height:44px}
 }
 @media(max-width:350px){.dashboard-grid{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}.category{grid-template-columns:minmax(0,1fr) 70px auto}.ring{width:82px;height:82px}}
+
+#welcomeSetup{position:fixed;inset:0;z-index:1000;overflow:auto;background:var(--bg);padding:18px;display:none}
+#welcomeSetup.visible{display:block}
+.welcome-inner{max-width:760px;margin:18px auto 36px;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:24px;box-shadow:var(--shadow)}
+.welcome-inner h2{font-size:24px;margin-bottom:5px}.welcome-subjects{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:12px}.welcome-subject{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:10px;padding:10px}.welcome-subject input[type=checkbox]{width:auto}.welcome-subject input[type=text]{flex:1;min-width:0}.welcome-field{margin:14px 0}.welcome-field label{display:block;font-size:13px;font-weight:700;margin-bottom:5px}.welcome-options{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px}.welcome-options label{display:flex;align-items:center;gap:8px;border:1px solid var(--line);padding:10px;border-radius:10px;font-weight:500}.welcome-options input{width:auto}.hello-title{font-size:23px;font-weight:750;margin:0 0 4px;color:var(--text)}
+@media(max-width:520px){#welcomeSetup{padding:8px}.welcome-inner{margin:8px auto;padding:16px;border-radius:15px}.welcome-inner h2{font-size:21px}}
 </style>
 </head>
 <body>
 <header><div class="headrow"><div class="logo">✓</div><div><h1>NotaCerta</h1><p>Regista as tuas notas. Define o teu objetivo. Planeia o próximo passo.</p></div></div></header>
 <main class="wrap">
 <div class="notice"><b>Protótipo local:</b> os dados ficam guardados neste navegador, neste dispositivo. Ainda não existem contas, sincronização nem acesso de professores. Não uses dados pessoais sensíveis nesta versão.</div>
+<section id="welcomeSetup" aria-labelledby="welcomeTitle">
+ <div class="welcome-inner">
+  <div class="logo" style="background:var(--mint);color:var(--green);margin-bottom:14px">✓</div>
+  <h2 id="welcomeTitle">Vamos preparar a tua NotaCerta</h2>
+  <p class="sub">Cria o teu perfil para organizarmos as disciplinas certas para ti. Os dados ficam guardados neste dispositivo.</p>
+  <form id="welcomeForm" novalidate>
+   <div class="welcome-field"><label for="welcomeName">Como te chamas? *</label><input id="welcomeName" type="text" maxlength="80" autocomplete="given-name" required placeholder="O teu nome"></div>
+   <div class="welcome-field"><label for="welcomeCycle">Ciclo de ensino *</label><select id="welcomeCycle" required><option value="">Escolhe o ciclo</option><option value="1">1.º ciclo</option><option value="2">2.º ciclo</option><option value="3">3.º ciclo</option><option value="secondary">Ensino secundário</option></select></div>
+   <div class="welcome-field"><label for="welcomeYear">Ano de escolaridade *</label><select id="welcomeYear" required disabled><option value="">Escolhe primeiro o ciclo</option></select></div>
+   <div class="welcome-field" id="welcomeLanguageField" hidden><label for="welcomeLanguage">Língua estrangeira *</label><select id="welcomeLanguage"><option value="Francês">Francês</option><option value="Espanhol">Espanhol</option></select></div>
+   <div class="welcome-field" id="welcomeSecondaryLanguageField" hidden><label for="welcomeSecondaryLanguage">Língua estrangeira comum *</label><select id="welcomeSecondaryLanguage"><option value="Inglês">Inglês</option><option value="Espanhol">Espanhol</option><option value="Francês">Francês</option></select></div>
+   <div class="welcome-field" id="welcomeCourseField" hidden><label for="welcomeCourse">Curso do secundário *</label><select id="welcomeCourse"><option value="">Escolhe o curso</option><option value="Ciencias e Tecnologias">Ciências e Tecnologias</option><option value="Ciencias Socio-Economicas">Ciências Socio-Económicas</option><option value="Linguas e Humanidades">Línguas e Humanidades</option><option value="Artes Visuais">Artes Visuais</option><option value="Profissional">Curso profissional</option></select></div>
+   <div class="welcome-field" id="welcomeChoicesField" hidden><label>Escolhe duas disciplinas específicas *</label><p class="sub" style="margin:0 0 8px">Seleciona exatamente duas. Poderás alterar os nomes mais tarde.</p><div id="welcomeChoices" class="welcome-options"></div><p id="welcomeChoiceCount" class="sub" style="margin:7px 0 0">Selecionadas: 0 de 2</p></div>
+   <div class="welcome-field" id="welcome12OptionsField" hidden><label>As tuas duas disciplinas de opção *</label><p class="sub" style="margin:0 0 8px">No 12.º ano, escreve os nomes das duas disciplinas que escolheste.</p><input id="welcome12Option1" type="text" maxlength="80" placeholder="Primeira disciplina de opção"><input id="welcome12Option2" type="text" maxlength="80" placeholder="Segunda disciplina de opção" style="margin-top:8px"></div>
+   <div class="welcome-field" id="welcomeProfessionalField" hidden><label for="welcomeSubjectCount">Quantas disciplinas queres acompanhar? *</label><input id="welcomeSubjectCount" type="number" min="1" max="30" step="1" value="8"><p class="sub" style="margin:5px 0 0">Abrem-se campos para escreveres os nomes das disciplinas.</p></div>
+   <div class="welcome-field" id="welcomeSubjectsField" hidden><label>Confirma os nomes das disciplinas</label><p class="sub" style="margin:0">Podes editar qualquer nome antes de começares.</p><div id="welcomeSubjects" class="welcome-subjects"></div></div>
+   <p id="welcomeError" role="alert" hidden style="padding:12px;border-radius:10px;background:#fff0f0;color:#A65353;font-weight:650"></p>
+   <div class="actions"><button type="submit" id="welcomeSubmit">Criar perfil e começar</button></div>
+  </form>
+ </div>
+</section>
 <section class="card" id="dashboardView">
+<div id="dashboardGreeting" class="hello-title" hidden></div>
 <div class="dashboard-top"><div><h2>As minhas disciplinas</h2><p class="sub" id="dashboardSubtitle" style="margin:4px 0 0">Média atual por disciplina</p></div><div class="actions" style="margin:0"><button class="secondary" id="dashboardSettings">Configurar ano e períodos</button><button id="dashboardAddSubject">+ Adicionar disciplina</button></div></div>
 <div class="dashboard-grid" id="dashboardSubjects" style="margin-top:18px"></div>
 </section>
@@ -297,7 +325,9 @@ function renderDashboard(){
  const y=activeYear(), p=activePeriod();
  const names=[];
  (y?.periods||[]).forEach(period=>(period.subjects||[]).forEach(sub=>{if(!names.some(n=>n.toLowerCase()===sub.name.toLowerCase()))names.push(sub.name)}));
- $("dashboardSubtitle").textContent=`${y?.label||"Ano letivo"} · ${p?.label||state.period} · média atual por disciplina`;
+  const savedProfile=readUserProfile();
+  const greeting=$("dashboardGreeting");greeting.hidden=!savedProfile.studentName;greeting.textContent=savedProfile.studentName?`Olá, ${savedProfile.studentName}! 👋`:'';
+  $("dashboardSubtitle").textContent=`${y?.label||"Ano letivo"} · ${p?.label||state.period} · média atual por disciplina`;
  if(!names.length){$("dashboardSubjects").innerHTML='<div class="subject-empty" style="grid-column:1/-1"><b>Ainda não tens disciplinas.</b><p>Adiciona as disciplinas que vais frequentar para começares a organizar o teu ano.</p></div>';return}
  $("dashboardSubjects").innerHTML=names.map(name=>{
   const sub=(p?.subjects||[]).find(x=>x.name.toLowerCase()===name.toLowerCase())||(y?.periods||[]).flatMap(x=>x.subjects||[]).find(x=>x.name.toLowerCase()===name.toLowerCase());
@@ -347,7 +377,7 @@ function renderDashboard(){
   const pct=mean===null?0:Math.max(0,Math.min(100,mean));
   const ring=mean===null?'':`<circle cx="50" cy="50" r="40" fill="none" stroke="${color}" stroke-width="8" stroke-linecap="round" stroke-dasharray="${pct*2.5133} 251.33" transform="rotate(-90 50 50)"/>`;
   const valueLabel=secondary?'nota final estimada':'média atual';
-  return `<article class="card subject-card"><svg class="ring" viewBox="0 0 100 100" role="img" aria-label="${escapeHtml(name)}: ${mean===null?'sem média':`${valueLabel} ${shown}`} "><circle cx="50" cy="50" r="40" fill="none" stroke="#e5ece8" stroke-width="8"/>${ring}<text x="50" y="56" text-anchor="middle" fill="currentColor" font-size="${mean===null?27:22}" font-weight="650">${shown}</text></svg><h3>${escapeHtml(name)}</h3><span class="muted" style="font-size:12px">${mean===null?'Sem avaliações':(secondary?'Nota final estimada (valores)':'Média atual em percentagem')}</span><div class="field goal-field"><label for="goal-${escapeHtml(sub?.id||name)}">Objetivo anual (${secondary?'0–20 valores':'nível 1–5'})</label><input class="annual-goal" id="goal-${escapeHtml(sub?.id||name)}" data-name="${escapeHtml(name)}" type="number" min="${secondary?0:1}" max="${max}" step="1" placeholder="Definir objetivo" value="${escapeHtml(goal)}"></div><div class="subject-actions"><button class="secondary small openSubject" data-name="${escapeHtml(name)}">Abrir disciplina</button><button class="danger small deleteSubject" data-name="${escapeHtml(name)}">Eliminar</button></div></article>`;
+  return `<article class="card subject-card"><svg class="ring" viewBox="0 0 100 100" role="img" aria-label="${escapeHtml(name)}: ${mean===null?'sem média':`${valueLabel} ${shown}`} "><circle cx="50" cy="50" r="40" fill="none" stroke="#e5ece8" stroke-width="8"/>${ring}<text x="50" y="56" text-anchor="middle" fill="currentColor" font-size="${mean===null?27:22}" font-weight="650">${shown}</text></svg><h3>${escapeHtml(name)}</h3><span class="muted" style="font-size:12px">${mean===null?'Sem avaliações':(secondary?'Nota final estimada (valores)':'Média atual em percentagem')}</span><div class="field goal-field"><label for="goal-${escapeHtml(sub?.id||name)}">Objetivo anual (${secondary?'0–20 valores':'nível 1–5'})</label><input class="annual-goal" id="goal-${escapeHtml(sub?.id||name)}" data-name="${escapeHtml(name)}" type="number" min="${secondary?0:1}" max="${max}" step="1" placeholder="Definir objetivo" value="${escapeHtml(goal)}"></div><div class="subject-actions"><button class="secondary small openSubject" data-name="${escapeHtml(name)}">Abrir disciplina</button><button class="secondary small renameSubject" data-name="${escapeHtml(name)}">Editar nome</button><button class="danger small deleteSubject" data-name="${escapeHtml(name)}">Eliminar</button></div></article>`;
  }).join('');
  $("dashboardSubjects").querySelectorAll('.openSubject').forEach(btn=>btn.addEventListener('click',()=>openSubjectFromDashboard(btn.dataset.name)));
  $("dashboardSubjects").querySelectorAll('.annual-goal').forEach(input=>input.addEventListener('change',()=>{
@@ -358,7 +388,12 @@ function renderDashboard(){
   activeYear().periods.forEach(period=>(period.subjects||[]).forEach(x=>{if(x.name.toLowerCase()===name.toLowerCase())x.goal=goal}));
   persist();renderDashboard();
  }));
- $("dashboardSubjects").querySelectorAll('.deleteSubject').forEach(btn=>btn.addEventListener('click',()=>{
+  $("dashboardSubjects").querySelectorAll('.renameSubject').forEach(btn=>btn.addEventListener('click',()=>{
+   const oldName=btn.dataset.name;const entered=prompt(`Novo nome para «${oldName}»:`,oldName);if(!entered||!entered.trim())return;const newName=entered.trim();
+   const y=activeYear();if(y.periods.some(period=>(period.subjects||[]).some(x=>x.name.toLowerCase()===newName.toLowerCase()&&x.name.toLowerCase()!==oldName.toLowerCase()))){alert('Já existe uma disciplina com esse nome neste ano letivo.');return}
+   y.periods.forEach(period=>(period.subjects||[]).forEach(x=>{if(x.name.toLowerCase()===oldName.toLowerCase())x.name=newName}));if(state.subject.toLowerCase()===oldName.toLowerCase())state.subject=newName;persist();renderDashboard();updateSubjectHeader();
+  }));
+  $("dashboardSubjects").querySelectorAll('.deleteSubject').forEach(btn=>btn.addEventListener('click',()=>{
   const name=btn.dataset.name;
   if(!confirm(`Eliminar a disciplina «${name}» do ano letivo ${activeYear()?.label||''}? Serão eliminados os registos, critérios e avaliações desta disciplina em todos os períodos deste ano letivo. Esta ação não pode ser desfeita.`))return;
   const y=activeYear();
@@ -489,10 +524,79 @@ function showConfiguration(){
 $('dashboardSettings').addEventListener('click',showConfiguration);
 $('configBackDashboard').addEventListener('click',showDashboard);
 
+const HAD_SAVED_APP_DATA=!!(localStorage.getItem(STORAGE_KEY)||localStorage.getItem("notacerta-prototype-v1"));
+function readUserProfile(){try{return JSON.parse(localStorage.getItem("notacerta-user-profile-v1")||"{}")}catch(e){return {}}}
+function writeUserProfile(profile){try{localStorage.setItem("notacerta-user-profile-v1",JSON.stringify(profile))}catch(e){}}
+function cycleYears(cycle){if(cycle==="secondary")return ["10.º ano","11.º ano","12.º ano"];const start=cycle==="1"?1:cycle==="2"?5:7;const end=cycle==="1"?4:cycle==="2"?6:9;return Array.from({length:end-start+1},(_,i)=>`${start+i}.º ano`)}
+const courseChoices={
+ "Ciencias e Tecnologias":["Física e Química A","Geometria Descritiva A","Biologia e Geologia"],
+ "Ciencias Socio-Economicas":["Economia A","Geografia A","História B"],
+ "Linguas e Humanidades":["Geografia A","Matemática Aplicada às Ciências Sociais","Literatura Portuguesa","Outra língua estrangeira","Latim A"],
+ "Artes Visuais":["Geometria Descritiva A","Matemática B","História da Cultura e das Artes"]
+};
+function isWelcome12th(){return $("welcomeCycle").value==="secondary"&&$("welcomeYear").value==="12.º ano"&&$("welcomeCourse").value!=="Profissional"}
+function welcomeMainSubject(course){return ({"Ciencias e Tecnologias":"Matemática A","Ciencias Socio-Economicas":"Economia A","Linguas e Humanidades":"História A","Artes Visuais":"Desenho A"})[course]||""}
+function welcomeBaseSubjects(){const cycle=$("welcomeCycle").value;if(cycle==="1")return ["Português","Matemática","Estudo do Meio"];if(cycle==="2")return ["Português","Matemática","Inglês","Ciências da Natureza","História e Geografia de Portugal"];if(cycle==="3")return ["Português","Matemática","Inglês",$("welcomeLanguage").value,"Físico-Química","Ciências Naturais","História","Geografia"];if(cycle==="secondary"){if(isWelcome12th())return ["Português",welcomeMainSubject($("welcomeCourse").value)];return ["Matemática A","Português",$("welcomeSecondaryLanguage").value,"Filosofia"]}return []}
+function renderWelcomeYears(){const cycle=$("welcomeCycle").value,sel=$("welcomeYear");sel.innerHTML='';if(!cycle){sel.disabled=true;sel.innerHTML='<option value="">Escolhe primeiro o ciclo</option>';return}sel.disabled=false;sel.innerHTML=cycleYears(cycle).map(y=>`<option value="${escapeHtml(y)}">${escapeHtml(y)}</option>`).join('')}
+function renderWelcomeChoices(){const course=$("welcomeCourse").value,field=$("welcomeChoicesField"),box=$("welcomeChoices");box.innerHTML='';if(!courseChoices[course]||isWelcome12th()){field.hidden=true;return}field.hidden=false;box.innerHTML=courseChoices[course].map((name,i)=>`<label><input type="checkbox" class="welcome-choice" value="${escapeHtml(name)}"><span>${escapeHtml(name)}</span></label>`).join('');box.querySelectorAll('input').forEach(input=>input.addEventListener('change',()=>{const checked=[...box.querySelectorAll('input:checked')];if(checked.length>2){input.checked=false;alert('Escolhe apenas duas disciplinas específicas.')}$("welcomeChoiceCount").textContent=`Selecionadas: ${box.querySelectorAll('input:checked').length} de 2`;renderWelcomeSubjects()}));$("welcomeChoiceCount").textContent='Selecionadas: 0 de 2'}
+function welcomeSubjectNames(){const cycle=$("welcomeCycle").value;if(!cycle)return [];if(cycle!=="secondary")return welcomeBaseSubjects();const course=$("welcomeCourse").value;if(course==="Profissional"){const n=Math.max(1,Math.min(30,Math.floor(Number($("welcomeSubjectCount").value)||1)));return Array.from({length:n},(_,i)=>`Disciplina ${i+1}`)}if(!courseChoices[course])return [];if(isWelcome12th()){const option1=$("welcome12Option1").value.trim(),option2=$("welcome12Option2").value.trim();return [...welcomeBaseSubjects(),option1,option2].filter(Boolean)}const selected=[...document.querySelectorAll('.welcome-choice:checked')].map(x=>x.value);return selected.length===2?[...welcomeBaseSubjects(),...selected]:[]}
+function renderWelcomeSubjects(){const cycle=$("welcomeCycle").value,course=$("welcomeCourse").value;const is12=isWelcome12th();$("welcomeLanguageField").hidden=cycle!=="3";$("welcomeSecondaryLanguageField").hidden=cycle!=="secondary"||is12;$("welcomeCourseField").hidden=cycle!=="secondary";$("welcome12OptionsField").hidden=!is12;$("welcomeProfessionalField").hidden=!(cycle==="secondary"&&course==="Profissional");if(cycle!=="secondary"||is12)$("welcomeChoicesField").hidden=true;else if(courseChoices[course])$("welcomeChoicesField").hidden=false;const names=welcomeSubjectNames();const field=$("welcomeSubjectsField"),box=$("welcomeSubjects");field.hidden=!names.length||is12;if(!names.length||is12){box.innerHTML='';return}const old=Object.fromEntries([...box.querySelectorAll('input')].map(x=>[x.dataset.index,{value:x.value,original:x.dataset.original}]));box.innerHTML=names.map((name,i)=>{const prior=old[i],value=prior&&prior.original===name?prior.value:name;return `<div class="welcome-subject"><span style="min-width:20px">${i+1}.</span><input type="text" required maxlength="80" data-index="${i}" data-original="${escapeHtml(name)}" aria-label="Nome da disciplina ${i+1}" value="${escapeHtml(value)}"></div>`}).join('')}
+function openWelcome(){const w=$("welcomeSetup");w.classList.add('visible');$("dashboardView").classList.add('view-hidden');$("configView").classList.add('view-hidden');$("detailView").classList.add('view-hidden');$("backDashboardActions").classList.add('view-hidden');renderWelcomeYears();renderWelcomeSubjects()}
+function closeWelcome(){ $("welcomeSetup").classList.remove('visible');$("dashboardView").classList.remove('view-hidden');renderAll();showDashboard() }
+$("welcomeCycle").addEventListener('change',()=>{renderWelcomeYears();renderWelcomeChoices();renderWelcomeSubjects()});
+$("welcomeYear").addEventListener('change',()=>{renderWelcomeChoices();renderWelcomeSubjects()});
+$("welcome12Option1").addEventListener('input',renderWelcomeSubjects);
+$("welcome12Option2").addEventListener('input',renderWelcomeSubjects);
+$("welcomeLanguage").addEventListener('change',renderWelcomeSubjects);
+$("welcomeSecondaryLanguage").addEventListener('change',renderWelcomeSubjects);
+$("welcomeCourse").addEventListener('change',()=>{renderWelcomeChoices();renderWelcomeSubjects()});
+$("welcomeSubjectCount").addEventListener('input',renderWelcomeSubjects);
+$("welcomeForm").addEventListener('submit',e=>{
+ e.preventDefault();
+ const errorBox=$("welcomeError");
+ if(errorBox){errorBox.hidden=true;errorBox.textContent=""}
+ try{
+  const name=$("welcomeName").value.trim(),cycle=$("welcomeCycle").value,year=$("welcomeYear").value,course=$("welcomeCourse").value;
+  if(!name)throw new Error('Indica o teu nome para continuares.');
+  if(!cycle||!year)throw new Error('Escolhe o ciclo e o ano de escolaridade.');
+  if(cycle==="secondary"&&!course)throw new Error('Escolhe o teu curso do secundário.');
+  if(cycle==="secondary"&&course!=="Profissional"&&!courseChoices[course])throw new Error('Escolhe o teu curso do secundário.');
+  if(cycle==="secondary"&&course!=="Profissional"&&year!=="12.º ano"&&document.querySelectorAll('.welcome-choice:checked').length!==2)throw new Error('Escolhe exatamente duas disciplinas específicas do teu curso.');
+  if(cycle==="secondary"&&course!=="Profissional"&&year==="12.º ano"&&(!$("welcome12Option1").value.trim()||!$("welcome12Option2").value.trim()))throw new Error('Escreve o nome das duas disciplinas de opção.');
+  if(cycle==="secondary"&&course==="Profissional"){const count=Number($("welcomeSubjectCount").value);if(!Number.isInteger(count)||count<1||count>30)throw new Error('Indica um número de disciplinas entre 1 e 30.');}
+  const names=isWelcome12th()?welcomeSubjectNames():[...$("welcomeSubjects").querySelectorAll('input')].map(x=>x.value.trim());
+  if(!names.length||names.some(x=>!x))throw new Error('Confirma o nome de todas as disciplinas.');
+  if(new Set(names.map(x=>x.toLowerCase())).size!==names.length)throw new Error('Cada disciplina deve ter um nome diferente.');
+  const oldNames=database.schoolYears.flatMap(y=>y.periods||[]).flatMap(p=>p.subjects||[]);
+  const hasMeaningfulData=HAD_SAVED_APP_DATA&&oldNames.some(x=>(x.assessments||[]).length||(x.categories||[]).some(c=>c.name&&c.name!=="Testes"));
+  if(!HAD_SAVED_APP_DATA){const active=activeYear();if(active)active.periods.forEach(p=>{p.subjects=[]});}
+  const y=activeYear()||ensureAcademicYear('2026/2027');
+  database.active.academicYearId=y.id;
+  const selectedYear=year;state.schoolyear=selectedYear;
+  y.periods.forEach(period=>{
+   if(!HAD_SAVED_APP_DATA){
+    period.subjects=names.map(subjectName=>({id:makeId('subject'),name:subjectName,schoolyear:selectedYear,categories:structuredClone(defaultCategories),assessments:[],levels:structuredClone(defaultLevels),goal:null}));
+   }else if(!hasMeaningfulData&&period.subjects.length===1&&period.subjects[0].name==='Matemática'&&!(period.subjects[0].assessments||[]).length){
+    period.subjects=names.map(subjectName=>({id:makeId('subject'),name:subjectName,schoolyear:selectedYear,categories:structuredClone(defaultCategories),assessments:[],levels:structuredClone(defaultLevels),goal:null}));
+   }
+  });
+  const p=activePeriod();
+  if(p?.subjects?.length)database.active.subjectId=p.subjects[0].id;
+  hydrateActive();
+  $("schoolyear").value=selectedYear;$("studentName").value=name;
+  const profile={...readUserProfile(),studentName:name,cycle,schoolyear:selectedYear,foreignLanguage:cycle==="3"?$("welcomeLanguage").value:(cycle==="secondary"?$("welcomeSecondaryLanguage").value:""),course:cycle==="secondary"?course:"",profileCompleted:true,subjects:names};
+  writeUserProfile(profile);persist();closeWelcome();
+ }catch(err){
+  if(errorBox){errorBox.textContent='Não foi possível concluir o perfil: '+(err&&err.message?err.message:'erro inesperado')+'. Os dados ainda não foram alterados.';errorBox.hidden=false;errorBox.scrollIntoView({behavior:'smooth',block:'center'});}
+  else alert('Não foi possível concluir o perfil: '+(err&&err.message?err.message:'erro inesperado'));
+  console.error('Erro ao concluir perfil NotaCerta:',err);
+ }
+});
 load();
-try { const profile=JSON.parse(localStorage.getItem("notacerta-user-profile-v1")||"{}"); $("studentName").value=profile.studentName||""; $("schoolName").value=profile.schoolName||""; } catch(e) {}
-["studentName","schoolName"].forEach(id=>$(id).addEventListener("input",()=>{localStorage.setItem("notacerta-user-profile-v1",JSON.stringify({studentName:$("studentName").value,schoolName:$("schoolName").value}));}));
+const initialProfile=readUserProfile();$("studentName").value=initialProfile.studentName||"";$("schoolName").value=initialProfile.schoolName||"";
+["studentName","schoolName"].forEach(id=>$(id).addEventListener("change",()=>{const profile=readUserProfile();profile[id]= $(id).value;writeUserProfile(profile);renderDashboard()}));
 renderAll();showDashboard();
+if(!initialProfile.profileCompleted&&!HAD_SAVED_APP_DATA){openWelcome()}
 </script>
 </body>
 </html>
