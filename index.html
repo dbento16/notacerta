@@ -1,5 +1,11 @@
 <!doctype html>
 <html lang="pt-PT">
+<link rel="manifest" href="./manifest.webmanifest">
+<meta name="theme-color" content="#246B70">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="NotaCerta">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -747,6 +753,19 @@ const initialProfile=readUserProfile();$("studentName").value=initialProfile.stu
 ["studentName","schoolName"].forEach(id=>$(id).addEventListener("change",()=>{const profile=readUserProfile();profile[id]= $(id).value;writeUserProfile(profile);renderDashboard()}));
 renderAll();showDashboard();
 if(!initialProfile.profileCompleted&&!HAD_SAVED_APP_DATA){openWelcome()}
+</script>
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./service-worker.js")
+      .then(registration => {
+        console.log("NotaCerta PWA registada:", registration.scope);
+      })
+      .catch(error => {
+        console.error("Erro ao registar a PWA:", error);
+      });
+  });
+}
 </script>
 </body>
 </html>
