@@ -173,7 +173,7 @@ hr{border:0;border-top:1px solid var(--line);margin:18px 0}
 </section>
 <section class="card">
 <h2>Guardar e recuperar</h2><p class="sub">Os dados são guardados automaticamente neste navegador. Exporta uma cópia de segurança regularmente, sobretudo antes de mudares de dispositivo.</p>
-<div class="actions"><button class="secondary" id="downloadBackup">Descarregar cópia JSON</button><button class="danger" id="clearAll">Apagar todos os dados</button></div>
+<div class="actions"><button class="secondary" id="downloadBackup">Descarregar cópia JSON</button><button class="danger" id="clearAll">Repor todos os dados</button></div>
 </section>
 </div>
 </div>
@@ -481,7 +481,34 @@ function exportJSON(){persist();download("notacerta-copia.json",JSON.stringify(d
 $("exportData").addEventListener("click",exportJSON);$("downloadBackup").addEventListener("click",exportJSON);
 $("importButton").addEventListener("click",()=>$("importFile").click());
 $("importFile").addEventListener("change",async e=>{const f=e.target.files[0];if(!f)return;try{const d=JSON.parse(await f.text());if(d?.schemaVersion===1&&Array.isArray(d.schoolYears)&&d.schoolYears.length){database=d;hydrateActive();renderAll();alert("Cópia importada.")}else if(Array.isArray(d.categories)&&Array.isArray(d.assessments)&&Array.isArray(d.levels)){database={schemaVersion:1,active:{academicYearId:"20262027",periodId:"p2",subjectId:"matematica"},schoolYears:[]};const y=ensureAcademicYear("2026/2027");const p=y.periods.find(x=>x.label===(d.period||"2.º período"))||y.periods[1];p.subjects.push({id:"matematica",name:d.subject||"Matemática",schoolyear:d.schoolyear||"7.º ano",categories:d.categories,assessments:d.assessments,levels:d.levels});database.active={academicYearId:y.id,periodId:p.id,subjectId:"matematica"};hydrateActive();renderAll();alert("Cópia antiga importada e convertida.")}else throw new Error()}catch(err){alert("Não foi possível importar. Escolhe um ficheiro JSON exportado pelo NotaCerta.")}e.target.value=""});
-$("clearAll").addEventListener("click",()=>{if(!confirm("Apagar todas as notas e configurações guardadas neste navegador? Esta ação não pode ser desfeita. Exporta primeiro uma cópia se quiseres guardar os dados."))return;localStorage.removeItem("notacerta-prototype-v1");localStorage.removeItem(STORAGE_KEY);database={schemaVersion:1,active:{academicYearId:"20262027",periodId:"p2",subjectId:"matematica"},schoolYears:[]};const y=ensureAcademicYear("2026/2027");const p=y.periods.find(x=>x.label==="2.º período");p.subjects.push({id:"matematica",name:"Matemática",schoolyear:"7.º ano",categories:structuredClone(defaultCategories),assessments:[],levels:structuredClone(defaultLevels)});database.active={academicYearId:y.id,periodId:p.id,subjectId:"matematica"};hydrateActive();renderAll()});
+$("clearAll").addEventListener("click", () => {
+
+    // Primeira confirmação
+    const firstConfirmation = confirm(
+        "Tens a certeza de que queres repor todos os dados da NotaCerta? " +
+        "O teu perfil, disciplinas, notas, avaliações e configurações serão apagados."
+    );
+
+    if (!firstConfirmation) return;
+
+    // Segunda confirmação
+    const secondConfirmation = confirm(
+        "ATENÇÃO: esta ação é irreversível. " +
+        "Todos os dados guardados neste dispositivo serão eliminados. " +
+        "Queres mesmo continuar?"
+    );
+
+    if (!secondConfirmation) return;
+
+    // Apagar os dados locais da NotaCerta
+    localStorage.removeItem("notacerta-data-v1");
+    localStorage.removeItem("notacerta-prototype-v1");
+    localStorage.removeItem("notacerta-user-profile-v1");
+
+    // Reiniciar a aplicação
+    location.reload();
+
+});
 function setupSubjectTabs(){
  const detail=$('detailView');
  const stacks=[...detail.querySelectorAll(':scope > .stack')];
