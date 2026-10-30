@@ -248,13 +248,13 @@ function activePeriod(){const y=activeYear();return y?.periods.find(p=>p.id===da
 function activeSubject(){return activePeriod()?.subjects.find(x=>x.id===database.active.subjectId)||activePeriod()?.subjects[0]}
 function storeActive(){const y=activeYear(),p=activePeriod();if(!y||!p)return;if(!database.active.subjectId&&!state.subject)return;let sub=p.subjects.find(x=>x.id===database.active.subjectId);if(!sub){sub={id:database.active.subjectId||makeId("subject"),name:state.subject||"Matemática",schoolyear:state.schoolyear,categories:[],assessments:[],levels:[]};p.subjects.push(sub);database.active.subjectId=sub.id}Object.assign(sub,{name:state.subject||sub.name,schoolyear:state.schoolyear,categories:structuredClone(state.categories),assessments:structuredClone(state.assessments),levels:structuredClone(state.levels)})}
 function hydrateActive(){const y=activeYear(),p=activePeriod();if(!y||!p)return;let sub=activeSubject();if(!sub){sub={id:makeId("subject"),name:"Matemática",schoolyear:"7.º ano",categories:structuredClone(defaultCategories),assessments:[],levels:structuredClone(defaultLevels)};p.subjects.push(sub)}database.active={academicYearId:y.id,periodId:p.id,subjectId:sub.id};state={schoolyear:sub.schoolyear||"7.º ano",subject:sub.name,period:p.label,categories:structuredClone(sub.categories||defaultCategories),assessments:structuredClone(sub.assessments||[]),levels:structuredClone(sub.levels||defaultLevels)}}
-function safeNum(v){if(v===""||v===null||!Number.isFinite(Number(v)))return null;let n=Number(v);return n>=0&&n<=100?n:null}
+function safeNum(v){if(v===""||v===null)return null;const normalized=typeof v==="string"?v.trim().replace(",","."):v;if(normalized===""||!Number.isFinite(Number(normalized)))return null;let n=Number(normalized);return n>=0&&n<=100?n:null}
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function persist(){try{storeActive();localStorage.setItem(STORAGE_KEY,JSON.stringify(database))}catch(e){}}
 function load(){try{let raw=localStorage.getItem(STORAGE_KEY);if(raw){const d=JSON.parse(raw);if(d&&d.schemaVersion===1&&Array.isArray(d.schoolYears)&&d.schoolYears.length){database=d;hydrateActive();return}}const legacy=JSON.parse(localStorage.getItem("notacerta-prototype-v1"));const y=ensureAcademicYear("2026/2027");const periodName=legacy?.period||"2.º período";const period=y.periods.find(p=>p.label===periodName)||y.periods[1];const sub={id:"matematica",name:legacy?.subject||"Matemática",schoolyear:legacy?.schoolyear||"7.º ano",categories:Array.isArray(legacy?.categories)?legacy.categories:structuredClone(defaultCategories),assessments:Array.isArray(legacy?.assessments)?legacy.assessments:[],levels:Array.isArray(legacy?.levels)?legacy.levels:structuredClone(defaultLevels)};period.subjects.push(sub);database.active={academicYearId:y.id,periodId:period.id,subjectId:sub.id};hydrateActive();persist()}catch(e){const y=ensureAcademicYear("2026/2027");const p=y.periods.find(x=>x.label==="2.º período");p.subjects.push({id:"matematica",name:"Matemática",schoolyear:"7.º ano",categories:structuredClone(defaultCategories),assessments:[],levels:structuredClone(defaultLevels)});database.active={academicYearId:y.id,periodId:p.id,subjectId:"matematica"};hydrateActive()}}
 function isSecondary(){return /^(10|11|12)\.º ano$/.test(state.schoolyear)}
 function displayScore(n){return fmt(isSecondary()?n/5:n)}
-function parseEnteredScore(v){const n=safeNum(v);return n===null?null:(isSecondary()?n*5:n)}
+function parseEnteredScore(v){if(v===null||v===undefined||String(v).trim()==="")return null;const normalized=String(v).trim().replace(/\s/g,"").replace(",",".");if(!/^(?:\d+(?:\.\d*)?|\.\d+)$/.test(normalized))return null;const n=Number(normalized);return Number.isFinite(n)&&n>=0&&n<=scoreMax()?(isSecondary()?n*5:n):null}
 function scoreMax(){return isSecondary()?20:100}
 function levelFor(n){
  if(isSecondary())return "—";
@@ -288,14 +288,14 @@ function renderCategories(){
 }
 function renderAssessments(){
  const body=$("assessments");
- body.innerHTML=state.assessments.map(a=>`<tr data-id="${escapeHtml(a.id)}"><td><input class="name" aria-label="Nome da avaliação" value="${escapeHtml(a.name)}"></td><td><select class="cat" aria-label="Critério">${state.categories.map(c=>`<option value="${escapeHtml(c.id)}" ${a.category===c.id?"selected":""}>${escapeHtml(c.name)}</option>`).join("")}</select></td><td><input class="date" aria-label="Data" type="date" value="${escapeHtml(a.date||"")}"></td><td><input class="score" aria-label="Nota de 0 a ${scoreMax()}" type="number" min="0" max="${scoreMax()}" step="0.1" value="${a.score===null?"":escapeHtml(displayScore(a.score))}" placeholder="—"></td><td><button class="danger small del" aria-label="Apagar avaliação">×</button></td></tr>`).join("");
+ body.innerHTML=state.assessments.map(a=>`<tr data-id="${escapeHtml(a.id)}"><td><input class="name" aria-label="Nome da avaliação" value="${escapeHtml(a.name)}"></td><td><select class="cat" aria-label="Critério">${state.categories.map(c=>`<option value="${escapeHtml(c.id)}" ${a.category===c.id?"selected":""}>${escapeHtml(c.name)}</option>`).join("")}</select></td><td><input class="date" aria-label="Data" type="date" value="${escapeHtml(a.date||"")}"></td><td><input class="score" aria-label="Nota de 0 a ${scoreMax()}" type="text" inputmode="decimal" min="0" max="${scoreMax()}" value="${a.score===null?"":escapeHtml(displayScore(a.score))}" placeholder="—"></td><td><button class="danger small del" aria-label="Apagar avaliação">×</button></td></tr>`).join("");
  $("emptyAssessments").hidden=state.assessments.length!==0;
  body.querySelectorAll("tr").forEach(tr=>{
   const a=state.assessments.find(x=>x.id===tr.dataset.id);
   tr.querySelector(".name").addEventListener("change",e=>{a.name=e.target.value;persist()});
   tr.querySelector(".cat").addEventListener("change",e=>{a.category=e.target.value;renderAll()});
   tr.querySelector(".date").addEventListener("change",e=>{a.date=e.target.value;persist()});
-  tr.querySelector(".score").addEventListener("change",e=>{const n=safeNum(e.target.value);a.score=n===null?null:(isSecondary()?n*5:n);renderAll()});
+  tr.querySelector(".score").addEventListener("change",e=>{const n=parseEnteredScore(e.target.value);if(e.target.value.trim()!==""&&n===null){alert(`Introduz uma nota válida entre 0 e ${scoreMax()} (podes usar vírgula ou ponto decimal).`);e.target.value=a.score===null?"":displayScore(a.score);return}a.score=n;persist();renderAll()});
   tr.querySelector(".del").addEventListener("click",()=>{state.assessments=state.assessments.filter(x=>x.id!==a.id);renderAll()});
  });
 }
@@ -377,6 +377,8 @@ function renderDashboard(){
   const secondary=isSecondaryForYear(sub?.schoolyear||state.schoolyear);
   const max=secondary?20:5;
   let goal=sub?.goal==null?'':String(sub.goal);
+  // Objetivos de classificação são sempre inteiros; corrige objetivos decimais antigos.
+  if(secondary&&goal!==''&&Number.isFinite(Number(goal))&&!Number.isInteger(Number(goal)))goal=String(Math.round(Number(goal)));
   if(!secondary&&goal!==''&&Number(goal)>5){const legacyPct=Number(goal);const levels=sub?.levels||defaultLevels;const converted=levels.find(l=>legacyPct>=Number(l.min)&&legacyPct<=Number(l.max));goal=String(converted?.level??(legacyPct>=90?5:legacyPct>=70?4:legacyPct>=50?3:legacyPct>=20?2:1));}
   const shown=mean===null?'—':(secondary?String(Math.round(mean/5)):`${fmt(mean)}%`);
   const goalLevel=goal===''?null:Number(goal);
@@ -416,23 +418,38 @@ function renderDashboard(){
    }
   }
   const pct=mean===null?0:Math.max(0,Math.min(100,mean));
-  const normalizedMean=mean===null?null:(secondary?mean/20*100:mean);
+  // Métrica global: secundário em pontos (0–200); básico pelo nível (1–5).
+  let globalValue=null;
+  if(mean!==null){
+   if(secondary){
+    globalValue=(mean/5)*10; // média interna 0–100 -> 0–20 -> 0–200
+   }else{
+    const levels=[...(sub?.levels||defaultLevels)].sort((a,b)=>Number(a.min)-Number(b.min));
+    const roundedMean=Math.round(mean);
+    const classification=levels.find(l=>roundedMean>=Number(l.min)&&roundedMean<=Number(l.max));
+    const level=classification?Number(classification.level):null;
+    if(Number.isFinite(level)&&level>=1&&level<=5)globalValue=level;
+   }
+  }
   const hasGoal=goalLevel!==null;
-  dashboardMetrics.push({mean,normalizedMean,hasGoal,hasGrades:mean!==null});
+  dashboardMetrics.push({mean,globalValue,hasGoal,hasGrades:mean!==null});
   const ring=mean===null?'':`<circle cx="50" cy="50" r="40" fill="none" stroke="${color}" stroke-width="8" stroke-linecap="round" stroke-dasharray="${pct*2.5133} 251.33" transform="rotate(-90 50 50)"/>`;
   const valueLabel=secondary?'nota final estimada':'média atual';
   return `<article class="card subject-card"><svg class="ring" viewBox="0 0 100 100" role="img" aria-label="${escapeHtml(name)}: ${mean===null?'sem média':`${valueLabel} ${shown}`} "><circle cx="50" cy="50" r="40" fill="none" stroke="#e5ece8" stroke-width="8"/>${ring}<text x="50" y="56" text-anchor="middle" fill="currentColor" font-size="${mean===null?27:22}" font-weight="650">${shown}</text></svg><h3>${escapeHtml(name)}</h3><span class="muted" style="font-size:12px">${mean===null?'Sem avaliações':(secondary?'Nota final estimada (valores)':'Média atual em percentagem')}</span><div class="field goal-field"><label for="goal-${escapeHtml(sub?.id||name)}">Objetivo anual (${secondary?'0–20 valores':'nível 1–5'})</label><input class="annual-goal" id="goal-${escapeHtml(sub?.id||name)}" data-name="${escapeHtml(name)}" type="number" min="${secondary?0:1}" max="${max}" step="1" placeholder="Definir objetivo" value="${escapeHtml(goal)}"></div><div class="subject-actions"><button class="secondary small openSubject" data-name="${escapeHtml(name)}">Abrir disciplina</button><button class="secondary small renameSubject" data-name="${escapeHtml(name)}">Editar nome</button><button class="danger small deleteSubject" data-name="${escapeHtml(name)}">Eliminar</button></div></article>`;
  }).join('');
  const withGrades=dashboardMetrics.filter(x=>x.hasGrades);
- const globalMean=withGrades.length?withGrades.reduce((sum,x)=>sum+x.normalizedMean,0)/withGrades.length:null;
+ const withGlobalValue=dashboardMetrics.filter(x=>x.globalValue!==null);
+ const globalMean=withGlobalValue.length?withGlobalValue.reduce((sum,x)=>sum+x.globalValue,0)/withGlobalValue.length:null;
+ const secondaryDashboard=isSecondaryForYear(state.schoolyear);
+ const globalScale=secondaryDashboard?"/ 200":"/ 5";
  const goalsCount=dashboardMetrics.filter(x=>x.hasGoal).length;
- $("dashboardOverview").innerHTML=`<div class="dashboard-hero"><small>Panorama do período</small><strong>${globalMean===null?"Ainda sem média":" "+fmt(globalMean)+"%"}</strong><p>${globalMean===null?"Regista as primeiras avaliações para começares a acompanhar o teu percurso.":"Média global indicativa das disciplinas com avaliações, com as escalas normalizadas para comparação."}</p></div><div class="dashboard-kpi"><span>Disciplinas</span><strong>${names.length}</strong><small>Neste ano letivo</small></div><div class="dashboard-kpi"><span>Com avaliações</span><strong>${withGrades.length}</strong><small>Com notas registadas</small></div><div class="dashboard-kpi"><span>Objetivos</span><strong>${goalsCount}</strong><small>Definidos</small></div>`;
+ $("dashboardOverview").innerHTML=`<div class="dashboard-hero"><small>Panorama do período</small><strong>${globalMean===null?"Ainda sem média":globalMean.toLocaleString("pt-PT",{minimumFractionDigits:1,maximumFractionDigits:1})+" "+globalScale}</strong><p>${globalMean===null?"Regista as primeiras avaliações para começares a acompanhar o teu percurso.":secondaryDashboard?"Média global indicativa das disciplinas com classificação, convertida para a escala de 0 a 200.":"Média global indicativa dos níveis das disciplinas com classificação, numa escala de 1 a 5."}</p></div><div class="dashboard-kpi"><span>Disciplinas</span><strong>${names.length}</strong><small>Neste ano letivo</small></div><div class="dashboard-kpi"><span>Com avaliações</span><strong>${withGrades.length}</strong><small>Com notas registadas</small></div><div class="dashboard-kpi"><span>Objetivos</span><strong>${goalsCount}</strong><small>Definidos</small></div>`;
  $("dashboardSubjects").querySelectorAll('.openSubject').forEach(btn=>btn.addEventListener('click',()=>openSubjectFromDashboard(btn.dataset.name)));
  $("dashboardSubjects").querySelectorAll('.annual-goal').forEach(input=>input.addEventListener('change',()=>{
   const name=input.dataset.name, val=input.value.trim(), sub=activeYear().periods.flatMap(x=>x.subjects||[]).find(x=>x.name.toLowerCase()===name.toLowerCase());
   const secondary=isSecondaryForYear(sub?.schoolyear||state.schoolyear), min=secondary?0:1, max=secondary?20:5;
-  if(val!==''&&(!Number.isFinite(Number(val))||!Number.isInteger(Number(val))||Number(val)<min||Number(val)>max)){alert(secondary?'O objetivo deve estar entre 0 e 20 valores.':'No ensino básico, o objetivo deve ser um nível inteiro entre 1 e 5.');renderDashboard();return}
-  const goal=val===''?null:Number(val);
+  if(val!==''&&(!Number.isFinite(Number(val.replace(",",".")))||!Number.isInteger(Number(val.replace(",",".")))||Number(val.replace(",","."))<min||Number(val.replace(",","."))>max)){alert(secondary?'O objetivo deve ser um número inteiro entre 0 e 20 valores.':'No ensino básico, o objetivo deve ser um nível inteiro entre 1 e 5.');renderDashboard();return}
+  const goal=val===''?null:Number(val.replace(',','.'));
   activeYear().periods.forEach(period=>(period.subjects||[]).forEach(x=>{if(x.name.toLowerCase()===name.toLowerCase())x.goal=goal}));
   persist();renderDashboard();
  }));
@@ -470,14 +487,14 @@ function renderSimulation(){
  const oldValues=Object.fromEntries([...$("simulationInputs").querySelectorAll("input")].map(x=>[x.dataset.key,x.value]));
  const counts=[...document.querySelectorAll(".remaining-count")].map(x=>({id:x.dataset.category,count:Math.max(0,Math.min(20,Math.floor(Number(x.value)||0)))}));
  let html="";
- counts.forEach(item=>{const cat=state.categories.find(c=>c.id===item.id);for(let i=0;i<item.count;i++){const key=`${item.id}-${i}`;html+=`<div class="field"><label for="sim-${escapeHtml(key)}">${escapeHtml(cat?.name||"Avaliação")} ${i+1} — nota hipotética (0–${scoreMax()})</label><input id="sim-${escapeHtml(key)}" data-key="${escapeHtml(key)}" data-category="${escapeHtml(item.id)}" class="sim-score" type="number" min="0" max="${scoreMax()}" step="0.1" placeholder="Introduz uma nota" value="${escapeHtml(oldValues[key]||"")}"></div>`;}});
+ counts.forEach(item=>{const cat=state.categories.find(c=>c.id===item.id);for(let i=0;i<item.count;i++){const key=`${item.id}-${i}`;html+=`<div class="field"><label for="sim-${escapeHtml(key)}">${escapeHtml(cat?.name||"Avaliação")} ${i+1} — nota hipotética (0–${scoreMax()})</label><input id="sim-${escapeHtml(key)}" data-key="${escapeHtml(key)}" data-category="${escapeHtml(item.id)}" class="sim-score" type="text" inputmode="decimal" min="0" max="${scoreMax()}" placeholder="Introduz uma nota" value="${escapeHtml(oldValues[key]||"")}"></div>`;}});
  $("simulationInputs").innerHTML=html || '<p class="sub">Indica acima quantas avaliações ainda faltam para abrir os campos de simulação.</p>';
  $("simulationInputs").querySelectorAll("input").forEach(input=>input.addEventListener("input",calcSimulation));
  calcSimulation();
 }
 function calcSimulation(){
  const inputs=[...$("simulationInputs").querySelectorAll("input")];
- const values=inputs.map(input=>input.value===""?null:(Number.isFinite(Number(input.value))&&Number(input.value)>=0&&Number(input.value)<=scoreMax()?Number(input.value):null));
+ const values=inputs.map(input=>input.value===""?null:parseEnteredScore(input.value));
  if(!inputs.length||values.some(v=>v===null)){
   $("simulatedAvg").textContent="—";
   $("simulationExplanation").textContent=`Preenche todas as notas hipotéticas com valores entre 0 e ${scoreMax()} para veres a média final estimada.`;
@@ -486,7 +503,7 @@ function calcSimulation(){
  }
  const categories=state.categories.map(c=>{
   const existing=state.assessments.filter(a=>a.category===c.id).map(a=>safeNum(a.score)).filter(v=>v!==null);
-  const simulated=inputs.filter(input=>input.dataset.category===c.id).map(input=>input.value===""?null:Number(input.value)).filter(v=>v!==null&&Number.isFinite(v)&&v>=0&&v<=scoreMax()).map(v=>isSecondary()?v*5:v);
+  const simulated=inputs.filter(input=>input.dataset.category===c.id).map(input=>input.value===""?null:parseEnteredScore(input.value)).filter(v=>v!==null);
   const scores=existing.concat(simulated);
   return {...c,avg:scores.length?scores.reduce((a,b)=>a+b,0)/scores.length:null};
  }).filter(c=>c.avg!==null&&Number(c.weight)>0);
