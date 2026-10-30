@@ -1,15 +1,14 @@
 <!doctype html>
 <html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="manifest" href="./manifest.webmanifest">
 <meta name="theme-color" content="#246B70">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="NotaCerta">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#246B70">
 <title>NotaCerta</title>
 <style>
 :root{--green:#246B70;--green2:#3D9290;--mint:#D9EFEB;--bg:#F3F8F7;--card:#FFFFFF;--text:#29494D;--muted:#718589;--line:#DCE9E6;--red:#A65353;--amber:#92743D;--gold:#C59A4A;--gold-soft:#F8F1E3;--shadow:0 8px 28px #204f5010;--soft:#EAF3F1}
@@ -149,7 +148,7 @@ header .logo{border:1px solid #FFFFFF35;box-shadow:inset 0 1px 0 #FFFFFF20}
 </section>
 <div class="actions" id="backDashboardActions" style="margin-top:0"><button class="secondary" id="backDashboard">← Voltar às disciplinas</button></div>
 <section class="card view-hidden" id="configView"><div class="row between" style="margin-bottom:16px"><div><h2>Configuração</h2><p class="sub" style="margin:4px 0 0">Configura o ano letivo e o teu perfil escolar.</p></div><button class="secondary" id="configBackDashboard">← Voltar às disciplinas</button></div><div id="profilePanel" hidden></div></section>
-<div class="grid" id="detailView">
+<div class="grid view-hidden" id="detailView">
 <div style="grid-column:1/-1">
  <div class="detail-top"><div><h2 id="detailSubjectTitle">Disciplina</h2><p class="sub" id="detailContext" style="margin:4px 0 0">Ano letivo · período</p></div><button class="secondary small" id="openProfileSettings">Configurar ano e períodos</button></div>
  <nav class="tabbar" id="subjectTabs" aria-label="Secções da disciplina" role="tablist">
@@ -241,7 +240,7 @@ const initialAssessments=[
  {id:uid(),name:"Observação do período",category:"observation",date:"",score:70}
 ];
 function uid(){return Math.random().toString(36).slice(2,10)}
-let state={schoolyear:"7.º ano",subject:"Matemática",period:"2.º período",categories:structuredClone(defaultCategories),assessments:initialAssessments,levels:structuredClone(defaultLevels)};
+let state={schoolyear:"7.º ano",subject:"",period:"2.º período",categories:structuredClone(defaultCategories),assessments:[],levels:structuredClone(defaultLevels)};
 const STORAGE_KEY="notacerta-data-v1";
 let database={schemaVersion:1,active:{academicYearId:"2026-2027",periodId:"p2",subjectId:"matematica"},schoolYears:[]};
 let editingLevels=false;
@@ -253,11 +252,15 @@ function activeYear(){return database.schoolYears.find(y=>y.id===database.active
 function activePeriod(){const y=activeYear();return y?.periods.find(p=>p.id===database.active.periodId)||y?.periods[0]}
 function activeSubject(){return activePeriod()?.subjects.find(x=>x.id===database.active.subjectId)||activePeriod()?.subjects[0]}
 function storeActive(){const y=activeYear(),p=activePeriod();if(!y||!p)return;if(!database.active.subjectId&&!state.subject)return;let sub=p.subjects.find(x=>x.id===database.active.subjectId);if(!sub){sub={id:database.active.subjectId||makeId("subject"),name:state.subject||"Matemática",schoolyear:state.schoolyear,categories:[],assessments:[],levels:[]};p.subjects.push(sub);database.active.subjectId=sub.id}Object.assign(sub,{name:state.subject||sub.name,schoolyear:state.schoolyear,categories:structuredClone(state.categories),assessments:structuredClone(state.assessments),levels:structuredClone(state.levels)})}
-function hydrateActive(){const y=activeYear(),p=activePeriod();if(!y||!p)return;let sub=activeSubject();if(!sub){sub={id:makeId("subject"),name:"Matemática",schoolyear:"7.º ano",categories:structuredClone(defaultCategories),assessments:[],levels:structuredClone(defaultLevels)};p.subjects.push(sub)}database.active={academicYearId:y.id,periodId:p.id,subjectId:sub.id};state={schoolyear:sub.schoolyear||"7.º ano",subject:sub.name,period:p.label,categories:structuredClone(sub.categories||defaultCategories),assessments:structuredClone(sub.assessments||[]),levels:structuredClone(sub.levels||defaultLevels)}}
+function hydrateActive(){const y=activeYear(),p=activePeriod();if(!y||!p){state={schoolyear:state.schoolyear||"7.º ano",subject:"",period:state.period||"2.º período",categories:structuredClone(defaultCategories),assessments:[],levels:structuredClone(defaultLevels)};return}const sub=activeSubject();if(!sub){database.active={academicYearId:y.id,periodId:p.id,subjectId:null};state={schoolyear:state.schoolyear||"7.º ano",subject:"",period:p.label,categories:structuredClone(defaultCategories),assessments:[],levels:structuredClone(defaultLevels)};return}database.active={academicYearId:y.id,periodId:p.id,subjectId:sub.id};state={schoolyear:sub.schoolyear||"7.º ano",subject:sub.name,period:p.label,categories:structuredClone(sub.categories||defaultCategories),assessments:structuredClone(sub.assessments||[]),levels:structuredClone(sub.levels||defaultLevels)}}
 function safeNum(v){if(v===""||v===null)return null;const normalized=typeof v==="string"?v.trim().replace(",","."):v;if(normalized===""||!Number.isFinite(Number(normalized)))return null;let n=Number(normalized);return n>=0&&n<=100?n:null}
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
-function persist(){try{storeActive();localStorage.setItem(STORAGE_KEY,JSON.stringify(database))}catch(e){}}
-function load(){try{let raw=localStorage.getItem(STORAGE_KEY);if(raw){const d=JSON.parse(raw);if(d&&d.schemaVersion===1&&Array.isArray(d.schoolYears)&&d.schoolYears.length){database=d;hydrateActive();return}}const legacy=JSON.parse(localStorage.getItem("notacerta-prototype-v1"));const y=ensureAcademicYear("2026/2027");const periodName=legacy?.period||"2.º período";const period=y.periods.find(p=>p.label===periodName)||y.periods[1];const sub={id:"matematica",name:legacy?.subject||"Matemática",schoolyear:legacy?.schoolyear||"7.º ano",categories:Array.isArray(legacy?.categories)?legacy.categories:structuredClone(defaultCategories),assessments:Array.isArray(legacy?.assessments)?legacy.assessments:[],levels:Array.isArray(legacy?.levels)?legacy.levels:structuredClone(defaultLevels)};period.subjects.push(sub);database.active={academicYearId:y.id,periodId:period.id,subjectId:sub.id};hydrateActive();persist()}catch(e){const y=ensureAcademicYear("2026/2027");const p=y.periods.find(x=>x.label==="2.º período");p.subjects.push({id:"matematica",name:"Matemática",schoolyear:"7.º ano",categories:structuredClone(defaultCategories),assessments:[],levels:structuredClone(defaultLevels)});database.active={academicYearId:y.id,periodId:p.id,subjectId:"matematica"};hydrateActive()}}
+function persist(){try{if(!Array.isArray(database.schoolYears)||!database.schoolYears.length)return;storeActive();localStorage.setItem(STORAGE_KEY,JSON.stringify(database))}catch(e){console.error("Não foi possível guardar os dados da NotaCerta:",e)}}
+function load(){try{const raw=localStorage.getItem(STORAGE_KEY);if(raw){const d=JSON.parse(raw);if(d&&d.schemaVersion===1&&Array.isArray(d.schoolYears)){database=d;hydrateActive();return}}
+ const legacyRaw=localStorage.getItem("notacerta-prototype-v1");
+ if(!legacyRaw){database={schemaVersion:1,active:{academicYearId:null,periodId:null,subjectId:null},schoolYears:[]};return}
+ const legacy=JSON.parse(legacyRaw);const y=ensureAcademicYear("2026/2027");const periodName=legacy?.period||"2.º período";const period=y.periods.find(p=>p.label===periodName)||y.periods[1];const sub={id:"matematica",name:legacy?.subject||"Matemática",schoolyear:legacy?.schoolyear||"7.º ano",categories:Array.isArray(legacy?.categories)?legacy.categories:structuredClone(defaultCategories),assessments:Array.isArray(legacy?.assessments)?legacy.assessments:[],levels:Array.isArray(legacy?.levels)?legacy.levels:structuredClone(defaultLevels)};period.subjects.push(sub);database.active={academicYearId:y.id,periodId:period.id,subjectId:sub.id};hydrateActive();persist()
+ }catch(e){console.error("Não foi possível recuperar os dados guardados da NotaCerta:",e);database={schemaVersion:1,active:{academicYearId:null,periodId:null,subjectId:null},schoolYears:[]};state={schoolyear:"7.º ano",subject:"",period:"2.º período",categories:structuredClone(defaultCategories),assessments:[],levels:structuredClone(defaultLevels)}}}
 function isSecondary(){return /^(10|11|12)\.º ano$/.test(state.schoolyear)}
 function displayScore(n){return fmt(isSecondary()?n/5:n)}
 function parseEnteredScore(v){if(v===null||v===undefined||String(v).trim()==="")return null;const normalized=String(v).trim().replace(/\s/g,"").replace(",",".");if(!/^(?:\d+(?:\.\d*)?|\.\d+)$/.test(normalized))return null;const n=Number(normalized);return Number.isFinite(n)&&n>=0&&n<=scoreMax()?(isSecondary()?n*5:n):null}
@@ -428,7 +431,7 @@ function renderDashboard(){
   let globalValue=null;
   if(mean!==null){
    if(secondary){
-    globalValue=(mean/5)*10; // média interna 0–100 -> 0–20 -> 0–200
+    globalValue=Math.round(mean/5)*10; // classificação inteira (0–20) convertida para 0–200
    }else{
     const levels=[...(sub?.levels||defaultLevels)].sort((a,b)=>Number(a.min)-Number(b.min));
     const roundedMean=Math.round(mean);
