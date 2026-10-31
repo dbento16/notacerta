@@ -242,7 +242,7 @@ const initialAssessments=[
 function uid(){return Math.random().toString(36).slice(2,10)}
 let state={schoolyear:"7.º ano",subject:"",period:"2.º período",categories:structuredClone(defaultCategories),assessments:[],levels:structuredClone(defaultLevels)};
 const STORAGE_KEY="notacerta-data-v1";
-let database={schemaVersion:1,active:{academicYearId:"2026-2027",periodId:"p2",subjectId:"matematica"},schoolYears:[]};
+let database={schemaVersion:1,active:{academicYearId:null,periodId:null,subjectId:null},schoolYears:[]};
 let editingLevels=false;
 const $=id=>document.getElementById(id);
 const periodNames=["1.º período","2.º período","3.º período","Ano completo"];
@@ -754,8 +754,8 @@ $("welcomeForm").addEventListener('submit',e=>{
 load();
 const initialProfile=readUserProfile();$("studentName").value=initialProfile.studentName||"";$("schoolName").value=initialProfile.schoolName||"";
 ["studentName","schoolName"].forEach(id=>$(id).addEventListener("change",()=>{const profile=readUserProfile();profile[id]= $(id).value;writeUserProfile(profile);renderDashboard()}));
-renderAll();showDashboard();
-if(!initialProfile.profileCompleted&&!HAD_SAVED_APP_DATA){openWelcome()}
+renderAll();
+if(initialProfile.profileCompleted===true){showDashboard()}else{openWelcome()}
 </script>
 <script>
 if ("serviceWorker" in navigator) {
