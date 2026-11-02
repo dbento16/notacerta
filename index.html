@@ -109,10 +109,41 @@ header .logo{border:1px solid #FFFFFF35;box-shadow:inset 0 1px 0 #FFFFFF20}
 .welcome-inner .logo{box-shadow:0 0 0 4px #F8F1E3}
 @media(prefers-reduced-motion:reduce){button,.subject-card{transition:none}button:not(:disabled):hover,.subject-card:hover{transform:none}}
 
+
+/* Menu lateral e painel inicial */
+.menu-toggle{background:#ffffff20;color:#fff;border:1px solid #ffffff35;width:44px;height:44px;padding:0;border-radius:12px;font-size:23px;display:grid;place-items:center;flex:0 0 44px}
+.menu-backdrop{position:fixed;inset:0;background:#102f31a6;z-index:1100;backdrop-filter:blur(2px)}
+.side-menu{position:fixed;z-index:1101;inset:0 auto 0 0;width:min(310px,86vw);background:var(--card);box-shadow:12px 0 40px #102f3125;transform:translateX(-105%);transition:transform .22s ease;padding:20px 15px;display:flex;flex-direction:column}
+.side-menu.open{transform:translateX(0)}.side-menu-head{display:flex;align-items:center;justify-content:space-between;padding:4px 5px 18px;border-bottom:1px solid var(--line);font-size:19px}
+.side-nav{display:grid;gap:6px;padding-top:18px}.side-link{display:flex;align-items:center;gap:13px;text-align:left;background:transparent;color:var(--text);padding:13px 14px;border-radius:12px;font-weight:600}
+.side-link span{width:23px;text-align:center;font-size:20px;color:var(--green)}.side-link.active{background:var(--soft);color:var(--green)}
+.side-menu-foot{margin-top:auto;padding:14px 5px 4px;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}
+.home-heading{margin:2px 0 5px;font-size:27px;letter-spacing:-.035em}.home-year{color:var(--muted);font-size:14px;margin:0}
+.home-summary{display:grid;grid-template-columns:minmax(0,1.2fr) repeat(2,minmax(115px,.65fr));gap:12px;margin:22px 0}
+.home-main-stat{background:linear-gradient(125deg,#205F64,#347F7D);color:#fff;border-radius:17px;padding:20px;min-width:0}.home-main-stat small{display:block;color:#D8EEEE;font-size:12px;font-weight:650;text-transform:uppercase;letter-spacing:.04em}
+.home-main-stat strong{display:block;font-size:34px;line-height:1.25;margin:5px 0;font-variant-numeric:tabular-nums}.home-main-stat p{margin:0;color:#E1F0ED;font-size:12px}
+.home-kpi{border:1px solid var(--line);border-radius:15px;background:#fff;padding:16px;display:flex;flex-direction:column;justify-content:center}.home-kpi span{font-size:12px;color:var(--muted)}.home-kpi strong{font-size:25px;color:var(--green);margin-top:4px;font-variant-numeric:tabular-nums}
+.highlights-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;margin-top:12px}.highlight-card{border:1px solid var(--line);border-radius:15px;background:#fff;padding:15px;min-width:0}
+.highlight-card small{display:block;color:var(--muted);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.035em}.highlight-card strong{display:block;margin:5px 0 2px;font-size:17px;overflow-wrap:anywhere}.highlight-card p{margin:0;color:var(--muted);font-size:12px}
+.history-year{border:1px solid var(--line);border-radius:14px;padding:14px;margin:12px 0}.history-subject{display:grid;grid-template-columns:minmax(0,1fr) 125px;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}.history-subject:last-child{border-bottom:0}.history-subject input{max-width:125px}
+@media(max-width:650px){.home-summary{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.home-main-stat{grid-column:1/-1}.home-kpi{padding:12px}.home-kpi strong{font-size:22px}.highlights-grid{grid-template-columns:1fr}.home-heading{font-size:25px}}
+@media(max-width:520px){.history-subject{grid-template-columns:minmax(0,1fr) 100px}.history-subject input{max-width:100px}}
+@media(prefers-reduced-motion:reduce){.side-menu{transition:none}}
+
 </style>
 </head>
 <body>
-<header><div class="headrow"><div class="logo">✓</div><div><h1>NotaCerta</h1><p>Regista as tuas notas. Define o teu objetivo. Planeia o próximo passo.</p></div></div></header>
+<header><div class="headrow"><button type="button" class="menu-toggle" id="menuToggle" aria-label="Abrir menu" aria-expanded="false">☰</button><div class="logo">✓</div><div><h1>NotaCerta</h1><p>O teu percurso escolar, num só lugar.</p></div></div></header>
+<div class="menu-backdrop" id="menuBackdrop" hidden></div>
+<aside class="side-menu" id="sideMenu" aria-label="Menu principal" aria-hidden="true">
+ <div class="side-menu-head"><strong>NotaCerta</strong><button type="button" class="secondary small" id="menuClose" aria-label="Fechar menu">✕</button></div>
+ <nav class="side-nav">
+  <button type="button" data-view="home" class="side-link active"><span>⌂</span> Início</button>
+  <button type="button" data-view="subjects" class="side-link"><span>▤</span> Disciplinas</button>
+  <button type="button" data-view="history" class="side-link"><span>◷</span> Percurso académico</button>
+  <button type="button" data-view="settings" class="side-link"><span>⚙</span> Configurações</button>
+ </nav><div class="side-menu-foot">NotaCerta · acompanhamento escolar</div>
+</aside>
 <main class="wrap">
 <div class="notice"><b>Protótipo local:</b> os dados ficam guardados neste navegador, neste dispositivo. Ainda não existem contas, sincronização nem acesso de professores. Não uses dados pessoais sensíveis nesta versão.</div>
 <section id="welcomeSetup" aria-labelledby="welcomeTitle">
@@ -141,10 +172,18 @@ header .logo{border:1px solid #FFFFFF35;box-shadow:inset 0 1px 0 #FFFFFF20}
  </div>
 </section>
 <section class="card" id="dashboardView">
-<div id="dashboardGreeting" class="hello-title" hidden></div>
-<div class="dashboard-top"><div><h2>As minhas disciplinas</h2><p class="sub" id="dashboardSubtitle" style="margin:4px 0 0">Média atual por disciplina</p></div><div class="actions" style="margin:0"><button class="secondary" id="dashboardSettings">Configurar ano e períodos</button><button id="dashboardAddSubject">+ Adicionar disciplina</button></div></div>
-<div id="dashboardOverview" class="dashboard-overview" aria-live="polite"></div>
-<div class="dashboard-grid" id="dashboardSubjects"></div>
+ <div><h2 class="home-heading" id="dashboardGreeting">Olá!</h2><p class="home-year" id="homeYearLabel">Ano letivo</p></div>
+ <div id="dashboardOverview" class="home-summary" aria-live="polite"></div>
+ <div style="margin-top:22px"><h2>Os teus destaques</h2><p class="sub" style="margin:4px 0 0">Pequenas conquistas e oportunidades de evolução.</p></div>
+ <div id="dashboardHighlights" class="highlights-grid" aria-live="polite"></div>
+</section>
+<section class="card view-hidden" id="subjectsView">
+ <div class="dashboard-top"><div><h2>As minhas disciplinas</h2><p class="sub" id="dashboardSubtitle" style="margin:4px 0 0">Média atual por disciplina</p></div><div class="actions" style="margin:0"><button class="secondary" id="dashboardSettings">Configurar ano e períodos</button><button id="dashboardAddSubject">+ Adicionar disciplina</button></div></div>
+ <div class="dashboard-grid" id="dashboardSubjects"></div>
+</section>
+<section class="card view-hidden" id="historyView">
+ <div><h2>Percurso académico</h2><p class="sub" style="margin:4px 0 0">Consulta os teus anos letivos e regista classificações finais de anos anteriores.</p></div>
+ <div id="historyContent"></div>
 </section>
 <div class="actions" id="backDashboardActions" style="margin-top:0"><button class="secondary" id="backDashboard">← Voltar às disciplinas</button></div>
 <section class="card view-hidden" id="configView"><div class="row between" style="margin-bottom:16px"><div><h2>Configuração</h2><p class="sub" style="margin:4px 0 0">Configura o ano letivo e o teu perfil escolar.</p></div><button class="secondary" id="configBackDashboard">← Voltar às disciplinas</button></div><div id="profilePanel" hidden></div></section>
@@ -241,26 +280,92 @@ const initialAssessments=[
 ];
 function uid(){return Math.random().toString(36).slice(2,10)}
 let state={schoolyear:"7.º ano",subject:"",period:"2.º período",categories:structuredClone(defaultCategories),assessments:[],levels:structuredClone(defaultLevels)};
-const STORAGE_KEY="notacerta-data-v1";
-let database={schemaVersion:1,active:{academicYearId:null,periodId:null,subjectId:null},schoolYears:[]};
+const STORAGE_KEY="notacerta-data-v2";
+const LEGACY_STORAGE_KEY="notacerta-data-v1";
+let database={schemaVersion:2,active:{academicYearId:null,periodId:null,subjectId:null},schoolYears:[]};
 let editingLevels=false;
 const $=id=>document.getElementById(id);
 const periodNames=["1.º período","2.º período","3.º período","Ano completo"];
 function makeId(prefix){return prefix+"-"+uid()}
-function ensureAcademicYear(label="2026/2027"){let y=database.schoolYears.find(x=>x.label===label);if(!y){y={id:label.replace(/[^0-9]/g,"")||makeId("year"),label,periods:[]};database.schoolYears.push(y)}for(const name of periodNames){if(!y.periods.some(p=>p.label===name))y.periods.push({id:name==="1.º período"?"p1":name==="2.º período"?"p2":name==="3.º período"?"p3":"full-year",label:name,subjects:[]})}return y}
+function periodIdForName(name){return name==="1.º período"?"p1":name==="2.º período"?"p2":name==="3.º período"?"p3":"full-year"}
+function ensureAcademicYear(label="2026/2027"){
+ let y=database.schoolYears.find(x=>x.label===label);
+ if(!y){y={id:label.replace(/[^0-9]/g,"")||makeId("year"),label,periods:[],subjects:[]};database.schoolYears.push(y)}
+ if(!Array.isArray(y.periods))y.periods=[];if(!Array.isArray(y.subjects))y.subjects=[];
+ for(const name of periodNames){if(!y.periods.some(p=>p.label===name))y.periods.push({id:periodIdForName(name),label:name})}
+ return y;
+}
 function activeYear(){return database.schoolYears.find(y=>y.id===database.active.academicYearId)||database.schoolYears[0]}
-function activePeriod(){const y=activeYear();return y?.periods.find(p=>p.id===database.active.periodId)||y?.periods[0]}
-function activeSubject(){return activePeriod()?.subjects.find(x=>x.id===database.active.subjectId)||activePeriod()?.subjects[0]}
-function storeActive(){const y=activeYear(),p=activePeriod();if(!y||!p)return;if(!database.active.subjectId&&!state.subject)return;let sub=p.subjects.find(x=>x.id===database.active.subjectId);if(!sub){sub={id:database.active.subjectId||makeId("subject"),name:state.subject||"Matemática",schoolyear:state.schoolyear,categories:[],assessments:[],levels:[]};p.subjects.push(sub);database.active.subjectId=sub.id}Object.assign(sub,{name:state.subject||sub.name,schoolyear:state.schoolyear,categories:structuredClone(state.categories),assessments:structuredClone(state.assessments),levels:structuredClone(state.levels)})}
-function hydrateActive(){const y=activeYear(),p=activePeriod();if(!y||!p){state={schoolyear:state.schoolyear||"7.º ano",subject:"",period:state.period||"2.º período",categories:structuredClone(defaultCategories),assessments:[],levels:structuredClone(defaultLevels)};return}const sub=activeSubject();if(!sub){database.active={academicYearId:y.id,periodId:p.id,subjectId:null};state={schoolyear:state.schoolyear||"7.º ano",subject:"",period:p.label,categories:structuredClone(defaultCategories),assessments:[],levels:structuredClone(defaultLevels)};return}database.active={academicYearId:y.id,periodId:p.id,subjectId:sub.id};state={schoolyear:sub.schoolyear||"7.º ano",subject:sub.name,period:p.label,categories:structuredClone(sub.categories||defaultCategories),assessments:structuredClone(sub.assessments||[]),levels:structuredClone(sub.levels||defaultLevels)}}
+function activePeriod(){const y=activeYear();return y?.periods.find(p=>p.id===database.active.periodId)||y?.periods.find(p=>p.id===periodIdForName(state.period))||y?.periods[0]}
+function periodData(sub,periodId,create=true){
+ if(!sub)return null;if(!sub.periodData||typeof sub.periodData!=="object")sub.periodData={};
+ if(!sub.periodData[periodId]&&create)sub.periodData[periodId]={categories:structuredClone(defaultCategories),assessments:[],levels:structuredClone(defaultLevels)};
+ return sub.periodData[periodId]||null;
+}
+function activeSubject(){const y=activeYear();return y?.subjects?.find(x=>x.id===database.active.subjectId)||y?.subjects?.[0]||null}
+function subjectsForPeriod(y,p){return (y?.subjects||[]).filter(sub=>!!periodData(sub,p?.id,false))}
+function storeActive(){
+ const y=activeYear(),p=activePeriod();if(!y||!p||!state.subject)return;
+ let sub=y.subjects.find(x=>x.id===database.active.subjectId);
+ if(!sub){sub={id:database.active.subjectId||makeId("subject"),name:state.subject,schoolyear:state.schoolyear,goal:null,periodData:{}};y.subjects.push(sub);database.active.subjectId=sub.id}
+ sub.name=state.subject||sub.name;sub.schoolyear=state.schoolyear;
+ const pd=periodData(sub,p.id,true);Object.assign(pd,{categories:structuredClone(state.categories),assessments:structuredClone(state.assessments),levels:structuredClone(state.levels)});
+}
+function hydrateActive(){
+ const y=activeYear(),p=activePeriod();
+ if(!y||!p){state={schoolyear:state.schoolyear||"7.º ano",subject:"",period:state.period||"2.º período",categories:structuredClone(defaultCategories),assessments:[],levels:structuredClone(defaultLevels)};return}
+ const sub=activeSubject();
+ if(!sub){database.active={academicYearId:y.id,periodId:p.id,subjectId:null};state={schoolyear:state.schoolyear||"7.º ano",subject:"",period:p.label,categories:structuredClone(defaultCategories),assessments:[],levels:structuredClone(defaultLevels)};return}
+ database.active={academicYearId:y.id,periodId:p.id,subjectId:sub.id};const pd=periodData(sub,p.id,true);
+ state={schoolyear:sub.schoolyear||"7.º ano",subject:sub.name,period:p.label,categories:structuredClone(pd.categories||defaultCategories),assessments:structuredClone(pd.assessments||[]),levels:structuredClone(pd.levels||defaultLevels)};
+}
+function migrateV1ToV2(oldDb){
+ if(!oldDb||oldDb.schemaVersion!==1||!Array.isArray(oldDb.schoolYears))throw new Error("Base de dados antiga inválida.");
+ const migrated={schemaVersion:2,active:structuredClone(oldDb.active||{academicYearId:null,periodId:null,subjectId:null}),schoolYears:[]};
+ const activeOldPeriod=oldDb.schoolYears.find(y=>y.id===migrated.active.academicYearId)?.periods?.find(p=>p.id===migrated.active.periodId);let mappedActiveSubjectId=null;
+ for(const oldYear of oldDb.schoolYears){
+  const y={id:oldYear.id,label:oldYear.label,periods:(oldYear.periods||[]).map(p=>({id:p.id,label:p.label})),subjects:[]};
+  for(const oldPeriod of oldYear.periods||[]){
+   for(const oldSub of oldPeriod.subjects||[]){
+    let sub=y.subjects.find(x=>x.name.trim().toLocaleLowerCase()===String(oldSub.name||"").trim().toLocaleLowerCase());
+    if(!sub){sub={id:oldSub.id||makeId("subject"),name:oldSub.name||"Disciplina",schoolyear:oldSub.schoolyear||"7.º ano",goal:oldSub.goal??null,periodData:{}};y.subjects.push(sub)}
+    if(oldYear.id===migrated.active.academicYearId&&oldPeriod.id===migrated.active.periodId&&oldSub.id===migrated.active.subjectId)mappedActiveSubjectId=sub.id;
+    const pd={categories:structuredClone(oldSub.categories||defaultCategories),assessments:structuredClone(oldSub.assessments||[]),levels:structuredClone(oldSub.levels||defaultLevels)};
+    if(!sub.periodData[oldPeriod.id])sub.periodData[oldPeriod.id]=pd;
+    else {const existing=sub.periodData[oldPeriod.id];const ids=new Set(existing.assessments.map(a=>a.id));for(const a of pd.assessments)if(!ids.has(a.id))existing.assessments.push(a);}
+    if(sub.goal==null&&oldSub.goal!=null)sub.goal=oldSub.goal;
+   }
+  }
+  migrated.schoolYears.push(y);
+ }
+ if(mappedActiveSubjectId)migrated.active.subjectId=mappedActiveSubjectId;
+ return migrated;
+}
+function validV2Database(db){
+ if(!db||db.schemaVersion!==2||!db.active||typeof db.active!=="object"||!Array.isArray(db.schoolYears))return false;
+ return db.schoolYears.every(y=>y&&typeof y.id==="string"&&typeof y.label==="string"&&Array.isArray(y.periods)&&y.periods.every(p=>p&&typeof p.id==="string"&&typeof p.label==="string")&&Array.isArray(y.subjects)&&y.subjects.every(sub=>{
+  if(!sub||typeof sub.id!=="string"||typeof sub.name!=="string"||!sub.periodData||typeof sub.periodData!=="object"||Array.isArray(sub.periodData))return false;
+  return Object.values(sub.periodData).every(pd=>pd&&Array.isArray(pd.categories)&&pd.categories.every(c=>c&&typeof c.id==="string"&&typeof c.name==="string"&&Number.isFinite(Number(c.weight)))&&Array.isArray(pd.assessments)&&pd.assessments.every(a=>a&&typeof a.id==="string"&&typeof a.name==="string"&&typeof a.category==="string"&&(a.score===null||a.score===undefined||Number.isFinite(Number(a.score))))&&Array.isArray(pd.levels)&&pd.levels.every(l=>l&&Number.isFinite(Number(l.level))&&Number.isFinite(Number(l.min))&&Number.isFinite(Number(l.max))));
+ }));
+}
 function safeNum(v){if(v===""||v===null)return null;const normalized=typeof v==="string"?v.trim().replace(",","."):v;if(normalized===""||!Number.isFinite(Number(normalized)))return null;let n=Number(normalized);return n>=0&&n<=100?n:null}
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function persist(){try{if(!Array.isArray(database.schoolYears)||!database.schoolYears.length)return;storeActive();localStorage.setItem(STORAGE_KEY,JSON.stringify(database))}catch(e){console.error("Não foi possível guardar os dados da NotaCerta:",e)}}
-function load(){try{const raw=localStorage.getItem(STORAGE_KEY);if(raw){const d=JSON.parse(raw);if(d&&d.schemaVersion===1&&Array.isArray(d.schoolYears)){database=d;hydrateActive();return}}
- const legacyRaw=localStorage.getItem("notacerta-prototype-v1");
- if(!legacyRaw){database={schemaVersion:1,active:{academicYearId:null,periodId:null,subjectId:null},schoolYears:[]};return}
- const legacy=JSON.parse(legacyRaw);const y=ensureAcademicYear("2026/2027");const periodName=legacy?.period||"2.º período";const period=y.periods.find(p=>p.label===periodName)||y.periods[1];const sub={id:"matematica",name:legacy?.subject||"Matemática",schoolyear:legacy?.schoolyear||"7.º ano",categories:Array.isArray(legacy?.categories)?legacy.categories:structuredClone(defaultCategories),assessments:Array.isArray(legacy?.assessments)?legacy.assessments:[],levels:Array.isArray(legacy?.levels)?legacy.levels:structuredClone(defaultLevels)};period.subjects.push(sub);database.active={academicYearId:y.id,periodId:period.id,subjectId:sub.id};hydrateActive();persist()
- }catch(e){console.error("Não foi possível recuperar os dados guardados da NotaCerta:",e);database={schemaVersion:1,active:{academicYearId:null,periodId:null,subjectId:null},schoolYears:[]};state={schoolyear:"7.º ano",subject:"",period:"2.º período",categories:structuredClone(defaultCategories),assessments:[],levels:structuredClone(defaultLevels)}}}
+function load(){
+ try{
+  const rawV2=localStorage.getItem(STORAGE_KEY);
+  if(rawV2){const d=JSON.parse(rawV2);if(validV2Database(d)){database=d;hydrateActive();return}}
+  const rawV1=localStorage.getItem(LEGACY_STORAGE_KEY);
+  if(rawV1){const old=JSON.parse(rawV1);const migrated=migrateV1ToV2(old);if(!validV2Database(migrated))throw new Error("A migração não passou na validação.");
+   // Preserva uma cópia integral e intocada da versão anterior antes de gravar a nova estrutura.
+   const backupKey="notacerta-data-v1-backup-before-v2";if(!localStorage.getItem(backupKey))localStorage.setItem(backupKey,rawV1);
+   database=migrated;hydrateActive();localStorage.setItem(STORAGE_KEY,JSON.stringify(database));return;
+  }
+  const legacyRaw=localStorage.getItem("notacerta-prototype-v1");
+  if(!legacyRaw){database={schemaVersion:2,active:{academicYearId:null,periodId:null,subjectId:null},schoolYears:[]};return}
+  const legacy=JSON.parse(legacyRaw);const y=ensureAcademicYear("2026/2027");const periodName=legacy?.period||"2.º período";const period=y.periods.find(p=>p.label===periodName)||y.periods[1];const sub={id:"matematica",name:legacy?.subject||"Matemática",schoolyear:legacy?.schoolyear||"7.º ano",goal:null,periodData:{}};sub.periodData[period.id]={categories:Array.isArray(legacy?.categories)?legacy.categories:structuredClone(defaultCategories),assessments:Array.isArray(legacy?.assessments)?legacy.assessments:[],levels:Array.isArray(legacy?.levels)?legacy.levels:structuredClone(defaultLevels)};y.subjects.push(sub);database.active={academicYearId:y.id,periodId:period.id,subjectId:sub.id};hydrateActive();persist();
+ }catch(e){console.error("Não foi possível recuperar os dados guardados da NotaCerta:",e);database={schemaVersion:2,active:{academicYearId:null,periodId:null,subjectId:null},schoolYears:[]};state={schoolyear:"7.º ano",subject:"",period:"2.º período",categories:structuredClone(defaultCategories),assessments:[],levels:structuredClone(defaultLevels)}}
+}
 function isSecondary(){return /^(10|11|12)\.º ano$/.test(state.schoolyear)}
 function displayScore(n){return fmt(isSecondary()?n/5:n)}
 function parseEnteredScore(v){if(v===null||v===undefined||String(v).trim()==="")return null;const normalized=String(v).trim().replace(/\s/g,"").replace(",",".");if(!/^(?:\d+(?:\.\d*)?|\.\d+)$/.test(normalized))return null;const n=Number(normalized);return Number.isFinite(n)&&n>=0&&n<=scoreMax()?(isSecondary()?n*5:n):null}
@@ -374,24 +479,25 @@ function renderDashboard(){
  const y=activeYear(), p=activePeriod();
  const names=[];
  const dashboardMetrics=[];
- (y?.periods||[]).forEach(period=>(period.subjects||[]).forEach(sub=>{if(!names.some(n=>n.toLowerCase()===sub.name.toLowerCase()))names.push(sub.name)}));
+ (y?.subjects||[]).forEach(sub=>{if(!names.some(n=>n.toLowerCase()===sub.name.toLowerCase()))names.push(sub.name)});
   const savedProfile=readUserProfile();
   const greeting=$("dashboardGreeting");greeting.hidden=!savedProfile.studentName;greeting.textContent=savedProfile.studentName?`Olá, ${savedProfile.studentName}! 👋`:'';
   $("dashboardSubtitle").textContent=`${y?.label||"Ano letivo"} · ${p?.label||state.period} · média atual por disciplina`;
  if(!names.length){$("dashboardOverview").innerHTML=`<div class="dashboard-hero"><small>Panorama do período</small><strong>Vamos começar?</strong><p>Adiciona disciplinas e regista avaliações para acompanhares a tua evolução.</p></div><div class="dashboard-kpi"><span>Disciplinas</span><strong>0</strong><small>Neste ano letivo</small></div><div class="dashboard-kpi"><span>Com avaliações</span><strong>0</strong><small>Com notas registadas</small></div><div class="dashboard-kpi"><span>Objetivos</span><strong>0</strong><small>Definidos</small></div>`;$ ("dashboardSubjects").innerHTML='<div class="subject-empty" style="grid-column:1/-1"><b>Ainda não tens disciplinas.</b><p>Adiciona as disciplinas que vais frequentar para começares a organizar o teu ano.</p></div>';return}
  $("dashboardSubjects").innerHTML=names.map(name=>{
-  const sub=(p?.subjects||[]).find(x=>x.name.toLowerCase()===name.toLowerCase())||(y?.periods||[]).flatMap(x=>x.subjects||[]).find(x=>x.name.toLowerCase()===name.toLowerCase());
+  const sub=(y?.subjects||[]).find(x=>x.name.toLowerCase()===name.toLowerCase());
+  const pd=periodData(sub,p?.id,false)||{};
   let mean=null;
-  if(sub){const cats=(sub.categories||[]).map(c=>{const scores=(sub.assessments||[]).filter(a=>a.category===c.id).map(a=>safeNum(a.score)).filter(v=>v!==null);return {...c,avg:scores.length?scores.reduce((a,b)=>a+b,0)/scores.length:null}}).filter(c=>c.avg!==null&&Number(c.weight)>0);const total=cats.reduce((sum,c)=>sum+Number(c.weight),0);if(total)mean=cats.reduce((sum,c)=>sum+c.avg*Number(c.weight),0)/total;}
+  if(sub){const cats=(pd.categories||[]).map(c=>{const scores=(pd.assessments||[]).filter(a=>a.category===c.id).map(a=>safeNum(a.score)).filter(v=>v!==null);return {...c,avg:scores.length?scores.reduce((a,b)=>a+b,0)/scores.length:null}}).filter(c=>c.avg!==null&&Number(c.weight)>0);const total=cats.reduce((sum,c)=>sum+Number(c.weight),0);if(total)mean=cats.reduce((sum,c)=>sum+c.avg*Number(c.weight),0)/total;}
   const secondary=isSecondaryForYear(sub?.schoolyear||state.schoolyear);
   const max=secondary?20:5;
   let goal=sub?.goal==null?'':String(sub.goal);
   // Objetivos de classificação são sempre inteiros; corrige objetivos decimais antigos.
   if(secondary&&goal!==''&&Number.isFinite(Number(goal))&&!Number.isInteger(Number(goal)))goal=String(Math.round(Number(goal)));
-  if(!secondary&&goal!==''&&Number(goal)>5){const legacyPct=Number(goal);const levels=sub?.levels||defaultLevels;const converted=levels.find(l=>legacyPct>=Number(l.min)&&legacyPct<=Number(l.max));goal=String(converted?.level??(legacyPct>=90?5:legacyPct>=70?4:legacyPct>=50?3:legacyPct>=20?2:1));}
+  if(!secondary&&goal!==''&&Number(goal)>5){const legacyPct=Number(goal);const levels=pd?.levels||defaultLevels;const converted=levels.find(l=>legacyPct>=Number(l.min)&&legacyPct<=Number(l.max));goal=String(converted?.level??(legacyPct>=90?5:legacyPct>=70?4:legacyPct>=50?3:legacyPct>=20?2:1));}
   const shown=mean===null?'—':(secondary?String(Math.round(mean/5)):`${fmt(mean)}%`);
   const goalLevel=goal===''?null:Number(goal);
-  const goalLevels=Array.isArray(sub?.levels)&&sub.levels.length?sub.levels:defaultLevels;
+  const goalLevels=Array.isArray(pd?.levels)&&pd.levels.length?pd.levels:defaultLevels;
   const goalBound=goalLevel===null?null:goalLevels.find(l=>Number(l.level)===goalLevel)||defaultLevels.find(l=>Number(l.level)===goalLevel)||null;
   const goalRaw=goalLevel===null?null:(secondary?goalLevel*5:Number(goalBound?.min??null));
   let color='#9aa8a1';
@@ -411,7 +517,7 @@ function renderDashboard(){
     else if(difference===-5)color='#991b1b';
     else color='#7f1d1d';
    }else{
-    const levels=[...(sub?.levels||defaultLevels)].sort((a,b)=>Number(a.min)-Number(b.min));
+    const levels=[...(pd?.levels||defaultLevels)].sort((a,b)=>Number(a.min)-Number(b.min));
     const roundedMean=Math.round(mean);
     const current=levels.find(l=>roundedMean>=Number(l.min)&&roundedMean<=Number(l.max));
     const currentLevel=current?Number(current.level):null;
@@ -433,7 +539,7 @@ function renderDashboard(){
    if(secondary){
     globalValue=Math.round(mean/5)*10; // classificação inteira (0–20) convertida para 0–200
    }else{
-    const levels=[...(sub?.levels||defaultLevels)].sort((a,b)=>Number(a.min)-Number(b.min));
+    const levels=[...(pd?.levels||defaultLevels)].sort((a,b)=>Number(a.min)-Number(b.min));
     const roundedMean=Math.round(mean);
     const classification=levels.find(l=>roundedMean>=Number(l.min)&&roundedMean<=Number(l.max));
     const level=classification?Number(classification.level):null;
@@ -455,41 +561,77 @@ function renderDashboard(){
  $("dashboardOverview").innerHTML=`<div class="dashboard-hero"><small>Panorama do período</small><strong>${globalMean===null?"Ainda sem média":globalMean.toLocaleString("pt-PT",{minimumFractionDigits:1,maximumFractionDigits:1})+" "+globalScale}</strong><p>${globalMean===null?"Regista as primeiras avaliações para começares a acompanhar o teu percurso.":secondaryDashboard?"Média global indicativa das disciplinas com classificação, convertida para a escala de 0 a 200.":"Média global indicativa dos níveis das disciplinas com classificação, numa escala de 1 a 5."}</p></div><div class="dashboard-kpi"><span>Disciplinas</span><strong>${names.length}</strong><small>Neste ano letivo</small></div><div class="dashboard-kpi"><span>Com avaliações</span><strong>${withGrades.length}</strong><small>Com notas registadas</small></div><div class="dashboard-kpi"><span>Objetivos</span><strong>${goalsCount}</strong><small>Definidos</small></div>`;
  $("dashboardSubjects").querySelectorAll('.openSubject').forEach(btn=>btn.addEventListener('click',()=>openSubjectFromDashboard(btn.dataset.name)));
  $("dashboardSubjects").querySelectorAll('.annual-goal').forEach(input=>input.addEventListener('change',()=>{
-  const name=input.dataset.name, val=input.value.trim(), sub=activeYear().periods.flatMap(x=>x.subjects||[]).find(x=>x.name.toLowerCase()===name.toLowerCase());
+  const name=input.dataset.name, val=input.value.trim(), sub=(activeYear()?.subjects||[]).find(x=>x.name.toLowerCase()===name.toLowerCase());
   const secondary=isSecondaryForYear(sub?.schoolyear||state.schoolyear), min=secondary?0:1, max=secondary?20:5;
   if(val!==''&&(!Number.isFinite(Number(val.replace(",",".")))||!Number.isInteger(Number(val.replace(",",".")))||Number(val.replace(",","."))<min||Number(val.replace(",","."))>max)){alert(secondary?'O objetivo deve ser um número inteiro entre 0 e 20 valores.':'No ensino básico, o objetivo deve ser um nível inteiro entre 1 e 5.');renderDashboard();return}
   const goal=val===''?null:Number(val.replace(',','.'));
-  activeYear().periods.forEach(period=>(period.subjects||[]).forEach(x=>{if(x.name.toLowerCase()===name.toLowerCase())x.goal=goal}));
+  if(sub)sub.goal=goal;
   persist();renderDashboard();
  }));
   $("dashboardSubjects").querySelectorAll('.renameSubject').forEach(btn=>btn.addEventListener('click',()=>{
    const oldName=btn.dataset.name;const entered=prompt(`Novo nome para «${oldName}»:`,oldName);if(!entered||!entered.trim())return;const newName=entered.trim();
-   const y=activeYear();if(y.periods.some(period=>(period.subjects||[]).some(x=>x.name.toLowerCase()===newName.toLowerCase()&&x.name.toLowerCase()!==oldName.toLowerCase()))){alert('Já existe uma disciplina com esse nome neste ano letivo.');return}
-   y.periods.forEach(period=>(period.subjects||[]).forEach(x=>{if(x.name.toLowerCase()===oldName.toLowerCase())x.name=newName}));if(state.subject.toLowerCase()===oldName.toLowerCase())state.subject=newName;persist();renderDashboard();updateSubjectHeader();
+   const y=activeYear();if(y.subjects.some(x=>x.name.toLowerCase()===newName.toLowerCase()&&x.name.toLowerCase()!==oldName.toLowerCase())){alert('Já existe uma disciplina com esse nome neste ano letivo.');return}
+   y.subjects.forEach(x=>{if(x.name.toLowerCase()===oldName.toLowerCase())x.name=newName});if(state.subject.toLowerCase()===oldName.toLowerCase())state.subject=newName;persist();renderDashboard();updateSubjectHeader();
   }));
   $("dashboardSubjects").querySelectorAll('.deleteSubject').forEach(btn=>btn.addEventListener('click',()=>{
   const name=btn.dataset.name;
   if(!confirm(`Eliminar a disciplina «${name}» do ano letivo ${activeYear()?.label||''}? Serão eliminados os registos, critérios e avaliações desta disciplina em todos os períodos deste ano letivo. Esta ação não pode ser desfeita.`))return;
   const y=activeYear();
-  y.periods.forEach(period=>{period.subjects=(period.subjects||[]).filter(x=>x.name.toLowerCase()!==name.toLowerCase())});
-  const p=activePeriod();database.active.subjectId=p?.subjects[0]?.id||null;
+  y.subjects=y.subjects.filter(x=>x.name.toLowerCase()!==name.toLowerCase());
+  const p=activePeriod();database.active.subjectId=y.subjects[0]?.id||null;
   if(database.active.subjectId)hydrateActive();else {state={schoolyear:state.schoolyear,subject:'',period:p?.label||state.period,categories:structuredClone(defaultCategories),assessments:[],levels:structuredClone(defaultLevels)}}
   persist();renderDashboard();
  }));
 }
+const renderDashboardOriginal=renderDashboard;
+function renderDashboard(){
+ renderDashboardOriginal();
+ const y=activeYear(),p=activePeriod(),profile=readUserProfile();
+ const greeting=$("dashboardGreeting");greeting.hidden=false;greeting.textContent=profile.studentName?`Olá, ${profile.studentName}! 👋`:'Olá! 👋';
+ $("homeYearLabel").textContent=`${y?.label||'Ano letivo'} · ${state.schoolyear||profile.schoolyear||''}${profile.course?` · ${profile.course}`:''}`;
+ const metrics=[];
+ (y?.subjects||[]).forEach(sub=>{
+  const pd=periodData(sub,p?.id,false)||{};const cats=(pd.categories||[]).map(c=>{const scores=(pd.assessments||[]).filter(a=>a.category===c.id).map(a=>safeNum(a.score)).filter(v=>v!==null);return {...c,avg:scores.length?scores.reduce((a,b)=>a+b,0)/scores.length:null,count:scores.length}}).filter(c=>c.avg!==null&&Number(c.weight)>0);
+  const weight=cats.reduce((n,c)=>n+Number(c.weight),0);if(!weight)return;
+  const mean=cats.reduce((n,c)=>n+c.avg*Number(c.weight),0)/weight;const sec=isSecondaryForYear(sub.schoolyear||state.schoolyear);
+  const value=sec?Math.max(0,Math.min(20,Math.round(mean/5))):levelForDashboard(mean,pd.levels);
+  metrics.push({name:sub.name,value,sec,goal:sub.goal==null?null:Number(sub.goal),count:cats.reduce((n,c)=>n+c.count,0)});
+ });
+ const secDash=isSecondaryForYear(state.schoolyear||profile.schoolyear);const avg=metrics.length?metrics.reduce((n,m)=>n+m.value,0)/metrics.length:null;
+ const avgText=avg===null?'—':avg.toLocaleString('pt-PT',{minimumFractionDigits:1,maximumFractionDigits:1});
+ const count=metrics.reduce((n,m)=>n+m.count,0);
+ $("dashboardOverview").innerHTML=`<div class="home-main-stat"><small>Resumo do desempenho</small><strong>${avg===null?'Vamos começar?':`${avgText} ${secDash?'/ 20':'/ 5'}`}</strong><p>${avg===null?'Regista a primeira avaliação para começares a ver os teus resultados.':`Média das classificações disponíveis em ${metrics.length} disciplina(s).`}</p></div><div class="home-kpi"><span>Disciplinas com notas</span><strong>${metrics.length}</strong></div><div class="home-kpi"><span>Avaliações registadas</span><strong>${count}</strong></div>`;
+ const options=[];
+ if(metrics.length){const sorted=[...metrics].sort((a,b)=>b.value-a.value);options.push({k:'best',i:'🏆',t:'Melhor resultado',n:sorted[0].name,d:`Classificação atual: ${sorted[0].value}${sorted[0].sec?' valores':' (nível)'}.`});
+  if(metrics.length>1){const m=sorted[sorted.length-1];options.push({k:'improve',i:'🌱',t:'Uma oportunidade de evolução',n:m.name,d:`Classificação atual: ${m.value}${m.sec?' valores':' (nível)'}.`});}
+  const goals=metrics.filter(m=>Number.isFinite(m.goal));const surpassed=goals.filter(m=>m.value>m.goal).sort((a,b)=>(b.value-b.goal)-(a.value-a.goal));if(surpassed.length){const m=surpassed[0];options.push({k:'surpassed',i:'🎯',t:'Objetivo superado',n:m.name,d:`Estás ${m.value-m.goal} ${m.sec?'valor(es)':'nível(is)'} acima do objetivo.`});}
+  const close=goals.filter(m=>m.value<=m.goal).sort((a,b)=>(a.goal-a.value)-(b.goal-b.value));if(close.length){const m=close[0];options.push({k:'close',i:'✨',t:'A caminho do objetivo',n:m.name,d:`Faltam ${m.goal-m.value} ${m.sec?'valor(es)':'nível(is)'} para alcançares o objetivo.`});}
+ }
+ let pool=[...options];const selected=[];while(pool.length&&selected.length<2){const i=Math.floor(Math.random()*pool.length);selected.push(pool.splice(i,1)[0]);}
+ $("dashboardHighlights").innerHTML=selected.length?selected.map(x=>`<article class="highlight-card"><small>${x.i} ${escapeHtml(x.t)}</small><strong>${escapeHtml(x.n)}</strong><p>${escapeHtml(x.d)}</p></article>`).join(''):'<div class="subject-empty" style="grid-column:1/-1">Ainda não há dados suficientes para criar destaques. Assim que registares uma avaliação, esta área começa a ganhar vida.</div>';
+}
+function levelForDashboard(mean,levels){const list=[...(Array.isArray(levels)&&levels.length?levels:defaultLevels)].sort((a,b)=>Number(a.min)-Number(b.min));const v=Math.round(Number(mean));const found=list.find(l=>v>=Number(l.min)&&v<=Number(l.max));if(found)return Number(found.level);const prior=list.filter(l=>v>=Number(l.min));return prior.length?Number(prior[prior.length-1].level):1;}
+
 function isSecondaryForYear(year){return /^(10|11|12)\.º ano$/.test(year||"")}
 function openSubjectFromDashboard(name){
- const y=activeYear(),p=activePeriod();let sub=p.subjects.find(x=>x.name.toLowerCase()===name.toLowerCase());
- if(!sub){const template=(y.periods.flatMap(x=>x.subjects||[]).find(x=>x.name.toLowerCase()===name.toLowerCase()))||null;sub={id:makeId("subject"),name,schoolyear:template?.schoolyear||state.schoolyear,categories:structuredClone(template?.categories||defaultCategories),assessments:[],levels:structuredClone(template?.levels||defaultLevels),goal:template?.goal??null};p.subjects.push(sub)}
- database.active.subjectId=sub.id;hydrateActive();renderAll();showDetails();
+ const y=activeYear(),p=activePeriod();let sub=y.subjects.find(x=>x.name.toLowerCase()===name.toLowerCase());
+ if(!sub){sub={id:makeId("subject"),name,schoolyear:state.schoolyear,goal:null,periodData:{}};y.subjects.push(sub)}
+ periodData(sub,p.id,true);database.active.subjectId=sub.id;hydrateActive();renderAll();showDetails();
 }
-function showDetails(){$("dashboardView").classList.add("view-hidden");$("configView").classList.add("view-hidden");$("detailView").classList.remove("view-hidden");$("backDashboardActions").classList.remove("view-hidden");if(typeof activateSubjectTab==="function")activateSubjectTab("summaryPanel");}
-function showDashboard(){persist();$("dashboardView").classList.remove("view-hidden");$("detailView").classList.add("view-hidden");$("configView").classList.add("view-hidden");$("profilePanel").hidden=true;$("backDashboardActions").classList.add("view-hidden");renderDashboard();}
+function showDetails(){$("dashboardView").classList.add("view-hidden");$("subjectsView").classList.add("view-hidden");$("historyView").classList.add("view-hidden");$("configView").classList.add("view-hidden");$("detailView").classList.remove("view-hidden");$("backDashboardActions").classList.remove("view-hidden");setActiveMenu("subjects");if(typeof activateSubjectTab==="function")activateSubjectTab("summaryPanel");}
+function hideMainViews(){["dashboardView","subjectsView","historyView","detailView","configView"].forEach(id=>$(id).classList.add("view-hidden"));$("backDashboardActions").classList.add("view-hidden");}
+function setActiveMenu(view){document.querySelectorAll(".side-link").forEach(b=>b.classList.toggle("active",b.dataset.view===view));}
+function closeSideMenu(){const m=$("sideMenu"),b=$("menuBackdrop");m.classList.remove("open");m.setAttribute("aria-hidden","true");b.hidden=true;$("menuToggle").setAttribute("aria-expanded","false");}
+function openSideMenu(){const m=$("sideMenu"),b=$("menuBackdrop");m.classList.add("open");m.setAttribute("aria-hidden","false");b.hidden=false;$("menuToggle").setAttribute("aria-expanded","true");}
+function showDashboard(){persist();hideMainViews();$("dashboardView").classList.remove("view-hidden");$("profilePanel").hidden=true;setActiveMenu("home");renderDashboard();}
+function showSubjects(){persist();hideMainViews();$("subjectsView").classList.remove("view-hidden");$("profilePanel").hidden=true;setActiveMenu("subjects");renderDashboard();}
+function showHistory(){persist();hideMainViews();$("historyView").classList.remove("view-hidden");$("profilePanel").hidden=true;setActiveMenu("history");renderHistoryOverview();}
+
 function renderProfileSelectors(){
  const y=activeYear(),p=activePeriod(),sub=activeSubject();
  $("academicYear").innerHTML=database.schoolYears.map(x=>`<option value="${escapeHtml(x.id)}">${escapeHtml(x.label)}</option>`).join("");if(y)$("academicYear").value=y.id;
  $("period").value=p?.label||state.period;
- $("subject").innerHTML=(p?.subjects||[]).map(x=>`<option value="${escapeHtml(x.id)}">${escapeHtml(x.name)}</option>`).join("");if(sub)$("subject").value=sub.id;
+ $("subject").innerHTML=subjectsForPeriod(y,p).map(x=>`<option value="${escapeHtml(x.id)}">${escapeHtml(x.name)}</option>`).join("");if(sub)$("subject").value=sub.id;
  $("schoolyear").value=state.schoolyear;
 }
 function renderSimulation(){
@@ -532,20 +674,20 @@ $("schoolyear").addEventListener("change",e=>{
  // O ano de escolaridade pertence ao perfil do aluno: atualiza todas as disciplinas
  // e todos os períodos do ano letivo ativo, sem tocar nas notas, avaliações ou critérios.
  const y=activeYear();
- (y?.periods||[]).forEach(period=>(period.subjects||[]).forEach(sub=>{sub.schoolyear=selectedYear}));
+ (y?.subjects||[]).forEach(sub=>{sub.schoolyear=selectedYear});
  renderAll();
 });
-$("academicYear").addEventListener("change",e=>{persist();database.active.academicYearId=e.target.value;const y=activeYear();const p=y.periods.find(x=>x.label===state.period)||y.periods[1]||y.periods[0];database.active.periodId=p.id;database.active.subjectId=p.subjects[0]?.id||null;hydrateActive();renderAll()});
-$("addAcademicYear").addEventListener("click",()=>{const label=prompt("Ano letivo (ex.: 2027/2028):");if(!label||!label.trim())return;const normalized=label.trim();if(database.schoolYears.some(y=>y.label.toLowerCase()===normalized.toLowerCase())){alert("Esse ano letivo já existe.");return}persist();const y=ensureAcademicYear(normalized);database.active.academicYearId=y.id;const p=y.periods.find(x=>x.label===state.period)||y.periods[1];database.active.periodId=p.id;database.active.subjectId=p.subjects[0]?.id||null;hydrateActive();renderAll()});
+$("academicYear").addEventListener("change",e=>{persist();database.active.academicYearId=e.target.value;const y=activeYear();const p=y.periods.find(x=>x.label===state.period)||y.periods[1]||y.periods[0];database.active.periodId=p.id;database.active.subjectId=y.subjects[0]?.id||null;hydrateActive();renderAll()});
+$("addAcademicYear").addEventListener("click",()=>{const label=prompt("Ano letivo (ex.: 2025/2026):");if(!label||!label.trim())return;const normalized=label.trim();if(database.schoolYears.some(y=>y.label.toLowerCase()===normalized.toLowerCase())){alert("Esse ano letivo já existe.");return}persist();const source=activeYear();const sourceStart=Number(String(source?.label||'').slice(0,4)),targetStart=Number(normalized.slice(0,4));const gradeMatch=String(state.schoolyear||'').match(/^(\d+)\.º ano$/);const targetGrade=gradeMatch&&Number.isFinite(sourceStart)&&Number.isFinite(targetStart)?Math.max(1,Math.min(12,Number(gradeMatch[1])+(targetStart-sourceStart))):null;const y=ensureAcademicYear(normalized);if(source&&source.subjects?.length){y.subjects=source.subjects.map(sub=>({id:makeId('subject'),name:sub.name,schoolyear:targetGrade?`${targetGrade}.º ano`:sub.schoolyear,goal:null,finalGrade:null,periodData:{}}));}y.isHistorical=targetStart<sourceStart;database.active.academicYearId=y.id;const p=y.periods.find(x=>x.label===state.period)||y.periods[1]||y.periods[0];database.active.periodId=p.id;database.active.subjectId=y.subjects[0]?.id||null;hydrateActive();renderAll();if(y.isHistorical)showHistory();});
 $("subject").addEventListener("change",e=>{persist();database.active.subjectId=e.target.value;hydrateActive();renderAll()});
-$("period").addEventListener("change",e=>{persist();const y=activeYear();const p=y.periods.find(x=>x.label===e.target.value);database.active.periodId=p.id;database.active.subjectId=p.subjects[0]?.id||null;hydrateActive();renderAll()});
-$("addSubject").addEventListener("click",()=>{const name=prompt("Nome da nova disciplina:");if(!name||!name.trim())return;const normalized=name.trim();const y=activeYear();if(y.periods.some(p=>p.subjects.some(s=>s.name.toLowerCase()===normalized.toLowerCase()))){alert("Já existe uma disciplina com esse nome neste ano letivo.");return}persist();let chosen=null;y.periods.forEach(p=>{const sub={id:makeId("subject"),name:normalized,schoolyear:state.schoolyear,categories:structuredClone(defaultCategories),assessments:[],levels:structuredClone(defaultLevels),goal:null};p.subjects.push(sub);if(p.id===database.active.periodId)chosen=sub});if(chosen)database.active.subjectId=chosen.id;hydrateActive();renderAll();showDetails()});
+$("period").addEventListener("change",e=>{persist();const y=activeYear();const p=y.periods.find(x=>x.label===e.target.value);database.active.periodId=p.id;database.active.subjectId=activeYear().subjects[0]?.id||null;hydrateActive();renderAll()});
+$("addSubject").addEventListener("click",()=>{const name=prompt("Nome da nova disciplina:");if(!name||!name.trim())return;const normalized=name.trim();const y=activeYear();if(y.subjects.some(s=>s.name.toLowerCase()===normalized.toLowerCase())){alert("Já existe uma disciplina com esse nome neste ano letivo.");return}persist();const sub={id:makeId("subject"),name:normalized,schoolyear:state.schoolyear,goal:null,periodData:{}};y.subjects.push(sub);periodData(sub,database.active.periodId,true);database.active.subjectId=sub.id;hydrateActive();renderAll();showDetails()});
 $("addCategory").addEventListener("click",()=>{const name=prompt("Nome do novo critério (ex.: Atitudes e valores):");if(!name||!name.trim())return;state.categories.push({id:uid(),name:name.trim(),weight:0});renderAll()});
 $("resetCategories").addEventListener("click",()=>{if(!confirm("Repor os três critérios de base (Testes 65%, Questões-aula 15%, Observação de aula 20%)? As avaliações atuais serão mantidas quando possível."))return;const old=state.assessments;state.categories=structuredClone(defaultCategories);state.assessments=old.map(a=>state.categories.some(c=>c.id===a.category)?a:{...a,category:"tests"});renderAll()});
 $("addAssessment").addEventListener("click",()=>{if(!state.categories.length)return;state.assessments.push({id:uid(),name:"Nova avaliação",category:state.categories[0].id,date:new Date().toISOString().slice(0,10),score:null});renderAll();const last=$("assessments").lastElementChild;last?.querySelector(".name")?.focus()});
 $("targetLevel").addEventListener("change",calcNeeded);
 
-$("backDashboard").addEventListener("click",showDashboard);
+$("backDashboard").addEventListener("click",showSubjects);
 $("dashboardAddSubject").addEventListener("click",()=>$("addSubject").click());
 
 $("editLevels").addEventListener("click",()=>{editingLevels=true;$("levelEditor").hidden=false;$("saveLevels").hidden=false;$("cancelLevels").hidden=false;$("editLevels").hidden=true});
@@ -562,10 +704,7 @@ $("welcomeImportFull").addEventListener("click",()=>$ ("welcomeImportFile").clic
 function validSubjectData(sub){
  return !!(sub&&typeof sub.id==="string"&&typeof sub.name==="string"&&Array.isArray(sub.categories)&&sub.categories.every(c=>c&&typeof c.id==="string"&&typeof c.name==="string"&&Number.isFinite(Number(c.weight)))&&Array.isArray(sub.assessments)&&sub.assessments.every(a=>a&&typeof a.id==="string"&&typeof a.name==="string"&&typeof a.category==="string"&&(a.score===null||a.score===undefined||Number.isFinite(Number(a.score))))&&Array.isArray(sub.levels)&&sub.levels.every(l=>l&&Number.isFinite(Number(l.level))&&Number.isFinite(Number(l.min))&&Number.isFinite(Number(l.max))));
 }
-function validFullDatabase(db){
- if(!db||db.schemaVersion!==1||!db.active||typeof db.active!=="object"||!Array.isArray(db.schoolYears)||!db.schoolYears.length)return false;
- return db.schoolYears.every(y=>y&&typeof y.id==="string"&&typeof y.label==="string"&&Array.isArray(y.periods)&&y.periods.length>0&&y.periods.every(p=>p&&typeof p.id==="string"&&typeof p.label==="string"&&Array.isArray(p.subjects)&&p.subjects.every(validSubjectData)));
-}
+function validFullDatabase(db){return validV2Database(db)||(!!(db&&db.schemaVersion===1&&db.active&&Array.isArray(db.schoolYears)&&db.schoolYears.length&&db.schoolYears.every(y=>y&&typeof y.id==="string"&&typeof y.label==="string"&&Array.isArray(y.periods)&&y.periods.every(p=>p&&typeof p.id==="string"&&typeof p.label==="string"&&Array.isArray(p.subjects)&&p.subjects.every(validSubjectData)))))}
 function importFullBackupFile(fileInput){
  fileInput.addEventListener("change",async e=>{
   const file=e.target.files?.[0];if(!file)return;
@@ -576,6 +715,7 @@ function importFullBackupFile(fileInput){
    else if(d?.schemaVersion===1&&Array.isArray(d.schoolYears)){candidate=d;profile=null;}
    else throw new Error("Formato de cópia completa não reconhecido.");
    if(!validFullDatabase(candidate))throw new Error("A estrutura dos dados académicos é inválida ou está incompleta.");
+   if(candidate.schemaVersion===1)candidate=migrateV1ToV2(candidate);
    if(!confirm("A cópia completa vai substituir o perfil e todos os dados académicos guardados neste dispositivo. Exporta primeiro uma cópia dos dados atuais. Queres continuar?"))return;
    database=structuredClone(candidate);
    if(profile)writeUserProfile(profile);
@@ -593,7 +733,7 @@ importFullBackupFile($("profileImportFile"));
 importFullBackupFile($("welcomeImportFile"));
 function exportCurrentSubject(){
  persist();const sub=activeSubject();if(!sub){alert("Não existe uma disciplina selecionada para exportar.");return;}
- const payload={app:"NotaCerta",backupVersion:2,backupType:"subject",exportedAt:new Date().toISOString(),subject:{name:sub.name,schoolyear:sub.schoolyear,categories:structuredClone(sub.categories||[]),assessments:structuredClone(sub.assessments||[]),levels:structuredClone(sub.levels||[]),goal:sub.goal??null},context:{academicYear:activeYear()?.label||"",period:activePeriod()?.label||""}};
+ const pd=periodData(sub,activePeriod()?.id,false)||{};const payload={app:"NotaCerta",backupVersion:2,backupType:"subject",exportedAt:new Date().toISOString(),subject:{id:sub.id,name:sub.name,schoolyear:sub.schoolyear,categories:structuredClone(pd.categories||[]),assessments:structuredClone(pd.assessments||[]),levels:structuredClone(pd.levels||[]),goal:sub.goal??null},context:{academicYear:activeYear()?.label||"",period:activePeriod()?.label||""}};
  download("notacerta-disciplina-"+sub.name.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")+".json",JSON.stringify(payload,null,2),"application/json");
 }
 $("exportSubject").addEventListener("click",exportCurrentSubject);
@@ -606,9 +746,9 @@ $("importSubjectFile").addEventListener("change",async e=>{
   if(!incoming||!current||typeof incoming.name!=="string"||incoming.name.trim().toLocaleLowerCase()!==current.name.trim().toLocaleLowerCase()||!validSubjectData({...incoming,id:current.id}))throw new Error("A cópia não corresponde à disciplina selecionada ou está incompleta.");
   if(!confirm("Importar esta cópia vai substituir todas as avaliações, critérios, classificações e objetivo da disciplina «"+current.name+"» no período atual. As restantes disciplinas e o perfil não serão alterados. Queres continuar?"))return;
   const replacement={...structuredClone(incoming),id:current.id,name:current.name};
-  const y=activeYear(),p=activePeriod(),index=p.subjects.findIndex(x=>x.id===current.id);
-  if(index<0)throw new Error("Não foi possível localizar a disciplina atual.");
-  p.subjects[index]=replacement;database.active.subjectId=replacement.id;hydrateActive();renderAll();showDetails();activateSubjectTab("assessmentsPanel");
+  const y=activeYear(),p=activePeriod(),target=y.subjects.find(x=>x.id===current.id);
+  if(!target)throw new Error("Não foi possível localizar a disciplina atual.");
+  target.name=replacement.name;target.schoolyear=replacement.schoolyear;target.goal=replacement.goal??target.goal;target.periodData[p.id]={categories:replacement.categories,assessments:replacement.assessments,levels:replacement.levels};database.active.subjectId=target.id;hydrateActive();renderAll();showDetails();activateSubjectTab("assessmentsPanel");
   alert("Dados da disciplina importados com sucesso. As restantes disciplinas não foram alteradas.");
  }catch(err){alert("Não foi possível importar esta disciplina. Confirma que escolheste uma cópia de disciplina compatível. Os dados atuais foram mantidos.");console.error("Erro ao importar disciplina NotaCerta:",err)}
  finally{e.target.value=""}
@@ -632,9 +772,10 @@ $("clearAll").addEventListener("click", () => {
 
     if (!secondConfirmation) return;
 
-    // Apagar os dados locais da NotaCerta
-    localStorage.removeItem("notacerta-data-v1");
-    localStorage.removeItem("notacerta-prototype-v1");
+    // Apagar todas as chaves locais pertencentes à NotaCerta, incluindo futuras chaves da aplicação.
+    Object.keys(localStorage)
+        .filter(key => key.startsWith("notacerta-"))
+        .forEach(key => localStorage.removeItem(key));
     localStorage.removeItem("notacerta-user-profile-v1");
 
     // Reiniciar a aplicação
@@ -670,20 +811,33 @@ function updateSubjectHeader(){const sub=activeSubject(),year=activeYear(),perio
 const originalRenderAll=renderAll;
 renderAll=function(){originalRenderAll();if($('detailSubjectTitle'))updateSubjectHeader()};
 setupSubjectTabs();
+function renderHistoryOverview(){
+ const host=$("historyContent"),activeId=database.active.academicYearId;
+ const years=[...(database.schoolYears||[])].sort((a,b)=>String(a.label).localeCompare(String(b.label)));
+ if(!years.length){host.innerHTML='<p class="empty">Ainda não existem anos letivos registados.</p>';return;}
+ host.innerHTML=years.map(y=>`<article class="history-year"><div class="row between"><strong>${escapeHtml(y.label)}</strong><span class="muted">${y.id===activeId?'Ano selecionado':(y.isHistorical?'Histórico':'Ano letivo')}</span></div><div>${(y.subjects||[]).map(sub=>{const sec=isSecondaryForYear(sub.schoolyear||'10.º ano');const val=sub.finalGrade??'';return `<label class="history-subject"><span>${escapeHtml(sub.name)}</span><input type="number" class="history-grade" data-year="${escapeHtml(y.id)}" data-subject="${escapeHtml(sub.id)}" min="${sec?0:1}" max="${sec?20:5}" step="1" placeholder="${sec?'0–20':'1–5'}" value="${escapeHtml(val)}" ${y.id===activeId&&!y.isHistorical?'disabled title="O ano atual é acompanhado através das avaliações."':''}></label>`}).join('')}</div><div class="actions"><button type="button" class="secondary small history-open-year" data-year="${escapeHtml(y.id)}">Abrir este ano</button></div></article>`).join('')+`<div class="actions"><button type="button" id="historyAddYear">+ Adicionar ano letivo</button></div>`;
+ host.querySelectorAll('.history-grade').forEach(input=>input.addEventListener('change',()=>{const y=database.schoolYears.find(x=>x.id===input.dataset.year),sub=y?.subjects.find(x=>x.id===input.dataset.subject);if(!sub)return;const value=input.value.trim();const sec=isSecondaryForYear(sub.schoolyear||'10.º ano'),min=sec?0:1,max=sec?20:5;if(value!==''&&(!Number.isInteger(Number(value))||Number(value)<min||Number(value)>max)){alert(`Introduz uma classificação inteira entre ${min} e ${max}.`);renderHistoryOverview();return;}sub.finalGrade=value===''?null:Number(value);y.isHistorical=true;persist();}));
+ host.querySelectorAll('.history-open-year').forEach(btn=>btn.addEventListener('click',()=>{persist();database.active.academicYearId=btn.dataset.year;const y=activeYear();const p=y.periods.find(x=>x.label===state.period)||y.periods[0];database.active.periodId=p?.id||null;database.active.subjectId=y.subjects[0]?.id||null;hydrateActive();renderAll();showSubjects();}));
+ $("historyAddYear").addEventListener('click',()=>$('addAcademicYear').click());
+}
+
 function showConfiguration(){
  persist();
- $('dashboardView').classList.add('view-hidden');
+ $('dashboardView').classList.add('view-hidden');$('subjectsView').classList.add('view-hidden');$('historyView').classList.add('view-hidden');
  $('detailView').classList.add('view-hidden');
  $('backDashboardActions').classList.add('view-hidden');
- $('configView').classList.remove('view-hidden');
+ $('configView').classList.remove('view-hidden');setActiveMenu('settings');
  $('profilePanel').hidden=false;
  $('subjectTabs').hidden=true;
  ['summaryPanel','assessmentsPanel','criteriaPanel','perspectivePanel'].forEach(id=>$(id).hidden=true);
 }
 $('dashboardSettings').addEventListener('click',showConfiguration);
 $('configBackDashboard').addEventListener('click',showDashboard);
+$('menuToggle').addEventListener('click',openSideMenu);$('menuClose').addEventListener('click',closeSideMenu);$('menuBackdrop').addEventListener('click',closeSideMenu);
+document.querySelectorAll('.side-link').forEach(btn=>btn.addEventListener('click',()=>{closeSideMenu();const v=btn.dataset.view;if(v==='home')showDashboard();else if(v==='subjects')showSubjects();else if(v==='history')showHistory();else showConfiguration();}));
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSideMenu()});
 
-const HAD_SAVED_APP_DATA=!!(localStorage.getItem(STORAGE_KEY)||localStorage.getItem("notacerta-prototype-v1"));
+const HAD_SAVED_APP_DATA=!!(localStorage.getItem(STORAGE_KEY)||localStorage.getItem(LEGACY_STORAGE_KEY)||localStorage.getItem("notacerta-prototype-v1"));
 function readUserProfile(){try{return JSON.parse(localStorage.getItem("notacerta-user-profile-v1")||"{}")}catch(e){return {}}}
 function writeUserProfile(profile){try{localStorage.setItem("notacerta-user-profile-v1",JSON.stringify(profile))}catch(e){}}
 function cycleYears(cycle){if(cycle==="secondary")return ["10.º ano","11.º ano","12.º ano"];const start=cycle==="1"?1:cycle==="2"?5:7;const end=cycle==="1"?4:cycle==="2"?6:9;return Array.from({length:end-start+1},(_,i)=>`${start+i}.º ano`)}
@@ -700,7 +854,7 @@ function renderWelcomeYears(){const cycle=$("welcomeCycle").value,sel=$("welcome
 function renderWelcomeChoices(){const course=$("welcomeCourse").value,field=$("welcomeChoicesField"),box=$("welcomeChoices");box.innerHTML='';if(!courseChoices[course]||isWelcome12th()){field.hidden=true;return}field.hidden=false;box.innerHTML=courseChoices[course].map((name,i)=>`<label><input type="checkbox" class="welcome-choice" value="${escapeHtml(name)}"><span>${escapeHtml(name)}</span></label>`).join('');box.querySelectorAll('input').forEach(input=>input.addEventListener('change',()=>{const checked=[...box.querySelectorAll('input:checked')];if(checked.length>2){input.checked=false;alert('Escolhe apenas duas disciplinas específicas.')}$("welcomeChoiceCount").textContent=`Selecionadas: ${box.querySelectorAll('input:checked').length} de 2`;renderWelcomeSubjects()}));$("welcomeChoiceCount").textContent='Selecionadas: 0 de 2'}
 function welcomeSubjectNames(){const cycle=$("welcomeCycle").value;if(!cycle)return [];if(cycle!=="secondary")return welcomeBaseSubjects();const course=$("welcomeCourse").value;if(course==="Profissional"){const n=Math.max(1,Math.min(30,Math.floor(Number($("welcomeSubjectCount").value)||1)));return Array.from({length:n},(_,i)=>`Disciplina ${i+1}`)}if(!courseChoices[course])return [];if(isWelcome12th()){const option1=$("welcome12Option1").value.trim(),option2=$("welcome12Option2").value.trim();return [...welcomeBaseSubjects(),option1,option2].filter(Boolean)}const selected=[...document.querySelectorAll('.welcome-choice:checked')].map(x=>x.value);return selected.length===2?[...welcomeBaseSubjects(),...selected]:[]}
 function renderWelcomeSubjects(){const cycle=$("welcomeCycle").value,course=$("welcomeCourse").value;const is12=isWelcome12th();$("welcomeLanguageField").hidden=cycle!=="3";$("welcomeSecondaryLanguageField").hidden=cycle!=="secondary"||is12;$("welcomeCourseField").hidden=cycle!=="secondary";$("welcome12OptionsField").hidden=!is12;$("welcomeProfessionalField").hidden=!(cycle==="secondary"&&course==="Profissional");if(cycle!=="secondary"||is12)$("welcomeChoicesField").hidden=true;else if(courseChoices[course])$("welcomeChoicesField").hidden=false;const names=welcomeSubjectNames();const field=$("welcomeSubjectsField"),box=$("welcomeSubjects");field.hidden=!names.length||is12;if(!names.length||is12){box.innerHTML='';return}const old=Object.fromEntries([...box.querySelectorAll('input')].map(x=>[x.dataset.index,{value:x.value,original:x.dataset.original}]));box.innerHTML=names.map((name,i)=>{const prior=old[i],value=prior&&prior.original===name?prior.value:name;return `<div class="welcome-subject"><span style="min-width:20px">${i+1}.</span><input type="text" required maxlength="80" data-index="${i}" data-original="${escapeHtml(name)}" aria-label="Nome da disciplina ${i+1}" value="${escapeHtml(value)}"></div>`}).join('')}
-function openWelcome(){const w=$("welcomeSetup");w.classList.add('visible');$("dashboardView").classList.add('view-hidden');$("configView").classList.add('view-hidden');$("detailView").classList.add('view-hidden');$("backDashboardActions").classList.add('view-hidden');renderWelcomeYears();renderWelcomeSubjects()}
+function openWelcome(){const w=$("welcomeSetup");w.classList.add('visible');$("dashboardView").classList.add('view-hidden');$("configView").classList.add('view-hidden');$("detailView").classList.add('view-hidden');$("backDashboardActions").classList.add('view-hidden');if(!$("welcomeName").value.trim())$("welcomeName").value=readUserProfile().studentName||"";renderWelcomeYears();renderWelcomeSubjects()}
 function closeWelcome(){ $("welcomeSetup").classList.remove('visible');$("dashboardView").classList.remove('view-hidden');renderAll();showDashboard() }
 $("welcomeCycle").addEventListener('change',()=>{renderWelcomeYears();renderWelcomeChoices();renderWelcomeSubjects()});
 $("welcomeYear").addEventListener('change',()=>{renderWelcomeChoices();renderWelcomeSubjects()});
@@ -726,21 +880,18 @@ $("welcomeForm").addEventListener('submit',e=>{
   const names=isWelcome12th()?welcomeSubjectNames():[...$("welcomeSubjects").querySelectorAll('input')].map(x=>x.value.trim());
   if(!names.length||names.some(x=>!x))throw new Error('Confirma o nome de todas as disciplinas.');
   if(new Set(names.map(x=>x.toLowerCase())).size!==names.length)throw new Error('Cada disciplina deve ter um nome diferente.');
-  const oldNames=database.schoolYears.flatMap(y=>y.periods||[]).flatMap(p=>p.subjects||[]);
-  const hasMeaningfulData=HAD_SAVED_APP_DATA&&oldNames.some(x=>(x.assessments||[]).length||(x.categories||[]).some(c=>c.name&&c.name!=="Testes"));
-  if(!HAD_SAVED_APP_DATA){const active=activeYear();if(active)active.periods.forEach(p=>{p.subjects=[]});}
+  const oldNames=database.schoolYears.flatMap(y=>y.subjects||[]);
+  const hasMeaningfulData=HAD_SAVED_APP_DATA&&oldNames.some(x=>Object.values(x.periodData||{}).some(pd=>(pd.assessments||[]).length||(pd.categories||[]).some(c=>c.name&&c.name!=="Testes")));
   const y=activeYear()||ensureAcademicYear('2026/2027');
   database.active.academicYearId=y.id;
   const selectedYear=year;state.schoolyear=selectedYear;
-  y.periods.forEach(period=>{
-   if(!HAD_SAVED_APP_DATA){
-    period.subjects=names.map(subjectName=>({id:makeId('subject'),name:subjectName,schoolyear:selectedYear,categories:structuredClone(defaultCategories),assessments:[],levels:structuredClone(defaultLevels),goal:null}));
-   }else if(!hasMeaningfulData&&period.subjects.length===1&&period.subjects[0].name==='Matemática'&&!(period.subjects[0].assessments||[]).length){
-    period.subjects=names.map(subjectName=>({id:makeId('subject'),name:subjectName,schoolyear:selectedYear,categories:structuredClone(defaultCategories),assessments:[],levels:structuredClone(defaultLevels),goal:null}));
-   }
-  });
+  if(!y.subjects.length||(!hasMeaningfulData&&y.subjects.length===1&&y.subjects[0].name==='Matemática'&&!Object.values(y.subjects[0].periodData||{}).some(pd=>(pd.assessments||[]).length))){
+   y.subjects=names.map(subjectName=>({id:makeId('subject'),name:subjectName,schoolyear:selectedYear,goal:null,periodData:{}}));
+  }
+  y.subjects.forEach(sub=>{sub.schoolyear=selectedYear;for(const period of y.periods)periodData(sub,period.id,true)});
   const p=activePeriod();
-  if(p?.subjects?.length)database.active.subjectId=p.subjects[0].id;
+  if(y.subjects.length)database.active.subjectId=y.subjects[0].id;
+  if(p)database.active.periodId=p.id;
   hydrateActive();
   $("schoolyear").value=selectedYear;$("studentName").value=name;
   const profile={...readUserProfile(),studentName:name,cycle,schoolyear:selectedYear,foreignLanguage:cycle==="3"?$("welcomeLanguage").value:(cycle==="secondary"?$("welcomeSecondaryLanguage").value:""),course:cycle==="secondary"?course:"",profileCompleted:true,subjects:names};
@@ -755,7 +906,12 @@ load();
 const initialProfile=readUserProfile();$("studentName").value=initialProfile.studentName||"";$("schoolName").value=initialProfile.schoolName||"";
 ["studentName","schoolName"].forEach(id=>$(id).addEventListener("change",()=>{const profile=readUserProfile();profile[id]= $(id).value;writeUserProfile(profile);renderDashboard()}));
 renderAll();
-if(initialProfile.profileCompleted===true){showDashboard()}else{openWelcome()}
+// Só considerar o perfil concluído quando existir também uma estrutura académica utilizável.
+const hasAcademicWorkspace=Array.isArray(database.schoolYears)&&database.schoolYears.some(y=>Array.isArray(y.subjects)&&y.subjects.length>0);
+if(initialProfile.profileCompleted===true&&hasAcademicWorkspace){showDashboard()}else{
+ if(initialProfile.profileCompleted===true){initialProfile.profileCompleted=false;writeUserProfile(initialProfile)}
+ openWelcome();
+}
 </script>
 <script>
 if ("serviceWorker" in navigator) {
