@@ -130,6 +130,15 @@ header .logo{border:1px solid #FFFFFF35;box-shadow:inset 0 1px 0 #FFFFFF20}
 @media(max-width:520px){.history-subject{grid-template-columns:minmax(0,1fr) 100px}.history-subject input{max-width:100px}}
 @media(prefers-reduced-motion:reduce){.side-menu{transition:none}}
 
+
+/* Percurso académico — nova camada */
+.nc-academic-card{background:#fff;border:1px solid var(--line);border-radius:15px;padding:15px;margin:12px 0;box-shadow:var(--shadow)}
+.nc-status{display:inline-flex;align-items:center;border-radius:99px;padding:4px 9px;background:#eef3f2;color:#647579;font-size:11px;font-weight:750;white-space:nowrap}.nc-status.warning{background:#fff4dc;color:#80612b}.nc-status.ok{background:#e7f5ed;color:#347451}
+.nc-year-card{padding:16px}.nc-year-controls{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}.nc-year-controls label,.nc-subject-extra label,.nc-entry-year,.nc-access-grid label,.nc-teacher-input{display:grid;gap:4px;font-size:12px;color:var(--muted);font-weight:650}.nc-year-controls select,.nc-subject-row select,.nc-subject-row input,.nc-subject-extra input,.nc-subject-extra select,.nc-entry-year select,.nc-access-grid input,.nc-access-grid select,.nc-teacher-input input{font-size:13px;padding:8px}
+.nc-periods{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin:12px 0}.nc-period-chip{font-size:11px;padding:5px 8px;border-radius:8px;background:#f0f4f3;color:#647579}.nc-period-chip.closed{background:#e7f5ed;color:#347451}
+.nc-subject-list{border:1px solid var(--line);border-radius:11px;overflow:hidden}.nc-subject-head,.nc-subject-row{display:grid;grid-template-columns:minmax(110px,1fr) 125px 125px;gap:8px;align-items:center;padding:9px 10px}.nc-subject-head{background:#f4f8f7;font-size:11px;font-weight:750;color:var(--muted)}.nc-subject-row{border-top:1px solid var(--line)}.nc-subject-row strong{display:block;font-size:13px}.nc-subject-row small{font-size:10px;color:var(--muted)}.nc-subject-extra{display:flex;gap:12px;align-items:end;flex-wrap:wrap;padding:4px 10px 12px 18px;border-bottom:1px solid var(--line);font-size:12px}.nc-subject-extra>span{color:var(--muted)}.nc-subject-extra label{min-width:130px;flex:1}.nc-subject-extra input{max-width:110px}.nc-cfc-value{font-size:32px;font-weight:800;color:var(--green);font-variant-numeric:tabular-nums}.nc-cfc-value small{display:block;font-size:11px;font-weight:500;color:var(--muted)}.nc-cfc-list{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.nc-cfc-list span{font-size:11px;padding:5px 8px;background:#f0f5f4;border-radius:8px}.nc-period-controls{display:grid;gap:7px;min-width:min(100%,300px)}.nc-period-buttons{display:flex;gap:5px;flex-wrap:wrap}.nc-period-buttons button.active{background:var(--green);color:white}.nc-lock-note{margin:4px 0 10px;padding:9px 11px;background:#fff4dc;color:#80612b;border-radius:9px;font-size:12px}.nc-period-controls button:disabled{opacity:.4;cursor:not-allowed}.nc-all-period{border-top:1px solid var(--line);padding:9px 0}.nc-all-period ul{list-style:none;padding:0;margin:5px 0 0}.nc-all-period li{display:flex;justify-content:space-between;gap:10px;padding:5px 2px;border-bottom:1px solid #edf2f1;font-size:12px}.nc-all-period li div{display:grid;gap:1px}.nc-all-period li small{font-size:10px;color:var(--muted)}.nc-access-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.nc-menu-warning{margin-left:auto;background:#fff0d5;color:#805b18;border-radius:50%;font-size:11px;font-weight:800;width:19px;height:19px;display:inline-grid;place-items:center}.nc-grade-summary{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}.nc-grade-summary>div{background:#f3f8f7;border-radius:11px;padding:11px}.nc-grade-summary small{display:block;color:var(--muted);font-size:11px}.nc-grade-summary strong{display:block;margin-top:4px;font-size:18px;color:var(--green)}.nc-access-ef{display:flex;align-items:center;gap:8px;margin:12px 0;font-size:12px;color:var(--muted)}.nc-access-ef input{width:auto}
+@media(max-width:650px){.nc-year-controls,.nc-access-grid{grid-template-columns:1fr}.nc-subject-head{display:none}.nc-subject-row{grid-template-columns:minmax(0,1fr) 105px 95px;gap:5px;padding:8px 6px}.nc-subject-extra{padding-left:8px}.nc-period-controls{width:100%}.nc-period-controls>button{width:100%}}
+
 </style>
 </head>
 <body>
@@ -475,7 +484,7 @@ function calcNeeded(){
  else if(needed>100){$("neededScore").textContent="Objetivo impossível";$("neededExplanation").textContent=`Seriam necessários ${displayScore(needed)} valores de média nas ${count} avaliação(ões) restante(s) de «${cat.name}». Revê os pesos ou os critérios introduzidos.`}
  else {$("neededScore").textContent=displayScore(needed)+(isSecondary()?" valores":"%");$("neededExplanation").textContent=isSecondary()?`Precisas desta média (em 0–20 valores) nas ${count} avaliação(ões) que faltam em «${cat.name}» para atingir a classificação pretendida de ${target} valores. Assume que as outras categorias mantêm a média atual.`:`Precisas desta média nas ${count} avaliação(ões) que faltam em «${cat.name}» para atingir pelo menos ${bound.min}%. Assume que as outras categorias mantêm a média atual.`}
 }
-function renderDashboard(){
+function renderDashboardOriginal(){
  const y=activeYear(), p=activePeriod();
  const names=[];
  const dashboardMetrics=[];
@@ -583,7 +592,6 @@ function renderDashboard(){
   persist();renderDashboard();
  }));
 }
-const renderDashboardOriginal=renderDashboard;
 function renderDashboard(){
  renderDashboardOriginal();
  const y=activeYear(),p=activePeriod(),profile=readUserProfile();
@@ -678,7 +686,23 @@ $("schoolyear").addEventListener("change",e=>{
  renderAll();
 });
 $("academicYear").addEventListener("change",e=>{persist();database.active.academicYearId=e.target.value;const y=activeYear();const p=y.periods.find(x=>x.label===state.period)||y.periods[1]||y.periods[0];database.active.periodId=p.id;database.active.subjectId=y.subjects[0]?.id||null;hydrateActive();renderAll()});
-$("addAcademicYear").addEventListener("click",()=>{const label=prompt("Ano letivo (ex.: 2025/2026):");if(!label||!label.trim())return;const normalized=label.trim();if(database.schoolYears.some(y=>y.label.toLowerCase()===normalized.toLowerCase())){alert("Esse ano letivo já existe.");return}persist();const source=activeYear();const sourceStart=Number(String(source?.label||'').slice(0,4)),targetStart=Number(normalized.slice(0,4));const gradeMatch=String(state.schoolyear||'').match(/^(\d+)\.º ano$/);const targetGrade=gradeMatch&&Number.isFinite(sourceStart)&&Number.isFinite(targetStart)?Math.max(1,Math.min(12,Number(gradeMatch[1])+(targetStart-sourceStart))):null;const y=ensureAcademicYear(normalized);if(source&&source.subjects?.length){y.subjects=source.subjects.map(sub=>({id:makeId('subject'),name:sub.name,schoolyear:targetGrade?`${targetGrade}.º ano`:sub.schoolyear,goal:null,finalGrade:null,periodData:{}}));}y.isHistorical=targetStart<sourceStart;database.active.academicYearId=y.id;const p=y.periods.find(x=>x.label===state.period)||y.periods[1]||y.periods[0];database.active.periodId=p.id;database.active.subjectId=y.subjects[0]?.id||null;hydrateActive();renderAll();if(y.isHistorical)showHistory();});
+$("addAcademicYear").addEventListener("click",()=>{
+ const label=prompt("Ano letivo a adicionar (ex.: 2026/2027):");if(!label||!label.trim())return;const normalized=label.trim();
+ if(!/^\d{4}\/\d{4}$/.test(normalized)){alert("Utiliza o formato AAAA/AAAA, por exemplo 2026/2027.");return;}
+ if(database.schoolYears.some(y=>y.label.toLowerCase()===normalized.toLowerCase())){alert("Esse ano letivo já existe.");return;}
+ const profile=readUserProfile(),currentGrade=Number(String(profile.schoolyear||state.schoolyear||'').slice(0,2))||7;
+ const source=(database.schoolYears||[]).find(y=>y.label===profile.currentAcademicYearLabel)||activeYear();
+ const sourceStart=Number(String(source?.label||'').slice(0,4)),targetStart=Number(normalized.slice(0,4));
+ const targetGrade=Math.max(1,Math.min(12,currentGrade+(targetStart-sourceStart)));
+ const isForward=targetGrade>currentGrade;
+ const defaultNames=isForward?(source?.subjects||[]).map(x=>x.name).join(', '):'';
+ const entered=prompt(isForward?`Confirma as disciplinas para o ${targetGrade}.º ano? Podes remover as que deixam de existir e acrescentar as novas. Separa os nomes por vírgulas.`:`Que disciplinas existiam no ${targetGrade}.º ano? Separa os nomes por vírgulas. Podes deixar em branco e adicioná-las mais tarde.`,defaultNames);
+ if(entered===null)return;
+ const names=[...new Set(entered.split(',').map(x=>x.trim()).filter(Boolean))];
+ persist();const y=ensureAcademicYear(normalized);y.subjects=names.map(name=>({id:makeId('subject'),name,schoolyear:`${targetGrade}.º ano`,goal:null,finalGrade:null,periodData:{}}));y.isHistorical=targetGrade<currentGrade;y.academicMeta={version:1,grade:`${targetGrade}.º ano`,status:y.isHistorical?'completed':'in_progress',periods:{}};
+ if(isForward){profile.schoolyear=`${targetGrade}.º ano`;profile.currentAcademicYearLabel=normalized;profile.profileCompleted=true;profile.historyCompleted=false;profile.subjects=names;writeUserProfile(profile);state.schoolyear=profile.schoolyear;}
+ database.active.academicYearId=y.id;database.active.periodId=y.periods.find(x=>x.id==='p1')?.id||y.periods[0]?.id;database.active.subjectId=y.subjects[0]?.id||null;hydrateActive();renderAll();showDashboard();
+});
 $("subject").addEventListener("change",e=>{persist();database.active.subjectId=e.target.value;hydrateActive();renderAll()});
 $("period").addEventListener("change",e=>{persist();const y=activeYear();const p=y.periods.find(x=>x.label===e.target.value);database.active.periodId=p.id;database.active.subjectId=activeYear().subjects[0]?.id||null;hydrateActive();renderAll()});
 $("addSubject").addEventListener("click",()=>{const name=prompt("Nome da nova disciplina:");if(!name||!name.trim())return;const normalized=name.trim();const y=activeYear();if(y.subjects.some(s=>s.name.toLowerCase()===normalized.toLowerCase())){alert("Já existe uma disciplina com esse nome neste ano letivo.");return}persist();const sub={id:makeId("subject"),name:normalized,schoolyear:state.schoolyear,goal:null,periodData:{}};y.subjects.push(sub);periodData(sub,database.active.periodId,true);database.active.subjectId=sub.id;hydrateActive();renderAll();showDetails()});
@@ -912,6 +936,209 @@ if(initialProfile.profileCompleted===true&&hasAcademicWorkspace){showDashboard()
  if(initialProfile.profileCompleted===true){initialProfile.profileCompleted=false;writeUserProfile(initialProfile)}
  openWelcome();
 }
+</script>
+<script>
+/* NotaCerta — camada de percurso académico v1
+   Compatível com a base de dados v2; os dados adicionais são guardados dentro dos anos/disciplinas
+   e acompanham as cópias de segurança existentes. */
+(function(){
+'use strict';
+const NC_META_VERSION=1;
+const NC_PERIODS=[['p1','1.º período'],['p2','2.º período'],['p3','3.º período']];
+const ncEsc=s=>escapeHtml(String(s??''));
+function ncYearMeta(y){
+ if(!y.academicMeta||typeof y.academicMeta!=='object')y.academicMeta={version:NC_META_VERSION,grade:(y.subjects||[]).find(s=>s.schoolyear)?.schoolyear||null,status:y.isHistorical?'completed':'in_progress',periods:{}};
+ const m=y.academicMeta;
+ if(!m.periods)m.periods={};
+ NC_PERIODS.forEach(([id])=>{if(!m.periods[id])m.periods[id]={closed:false,closedAt:null}});
+ if(!['in_progress','awaiting_completion','completed'].includes(m.status))m.status=y.isHistorical?'completed':'in_progress';
+ return m;
+}
+function ncSubjectMeta(sub){
+ if(!sub.academicMeta||typeof sub.academicMeta!=='object')sub.academicMeta={duration:null,exam:{score:null,purpose:'none'},teacherFinal:null};
+ if(!sub.academicMeta.exam)sub.academicMeta.exam={score:null,purpose:'none'};
+ return sub.academicMeta;
+}
+function ncGradeOf(y,sub){return ncYearMeta(y).grade||sub.schoolyear||''}
+function ncAnnualGrade(sub){const p3=sub?.periodData?.p3;return p3&&p3.teacherGrade!==null&&p3.teacherGrade!==undefined&&p3.teacherGrade!==''?Number(p3.teacherGrade):(sub?.finalGrade===null||sub?.finalGrade===undefined||sub?.finalGrade===''?null:Number(sub.finalGrade));}
+function ncDurationDefault(sub,profile){
+ const name=String(sub.name||'').toLocaleLowerCase('pt-PT');
+ const main=String(profile.mainSubject||welcomeMainSubject(profile.course)||'').toLocaleLowerCase('pt-PT');
+ if(name==='português'||name==='educação física'||(main&&name===main))return 'trienal';
+ if(profile.schoolyear==='12.º ano'&&Array.isArray(profile.subjects)&&profile.subjects.slice(2).some(n=>String(n).toLocaleLowerCase('pt-PT')===name))return 'anual';
+ if(/educação moral e religiosa/.test(name))return 'excluded';
+ if(/aplicaç(ões|oes) informáticas|oficina de artes|oficina multimédia|oficina de design/.test(name))return 'anual';
+ return 'bienal';
+}
+function ncDuration(sub,profile){const m=ncSubjectMeta(sub);return ['trienal','bienal','anual','excluded'].includes(m.duration)?m.duration:ncDurationDefault(sub,profile)}
+function ncYearStart(y){const n=Number(String(y.label||'').slice(0,4));return Number.isFinite(n)?n:0}
+function ncRecordsBySubject(name){
+ const out=[];
+ (database.schoolYears||[]).forEach(y=>(y.subjects||[]).forEach(sub=>{if(String(sub.name).trim().toLocaleLowerCase('pt-PT')===String(name).trim().toLocaleLowerCase('pt-PT'))out.push({y,sub,grade:ncGradeOf(y,sub)})}));
+ return out.sort((a,b)=>ncYearStart(a.y)-ncYearStart(b.y));
+}
+function ncDefaultEntryYear(profile){const current=Number(String(profile.schoolyear||state.schoolyear||'').slice(0,2));const latest=(database.schoolYears||[]).find(y=>y.label===profile.currentAcademicYearLabel)||[...(database.schoolYears||[])].find(y=>ncYearMeta(y).grade===profile.schoolyear)||[...(database.schoolYears||[])].sort((a,b)=>ncYearStart(a)-ncYearStart(b)).slice(-1)[0];const start=ncYearStart(latest);return start&&current?`${start-(current-10)}/${start-(current-10)+1}`:''}
+function ncCurrentRulesApply(profile){const entry=Number(String(profile.secondaryEntryYear||ncDefaultEntryYear(profile)).slice(0,4));return Number.isFinite(entry)&&entry>=2023;}
+function ncRelevantRecords(records){if(!ncIsSecondaryProfile())return records;return records.filter(r=>{const g=Number(String(r.grade||'').slice(0,2));return g>=10&&g<=12;});}
+function ncExpectedYears(duration){return duration==='trienal'?3:duration==='bienal'?2:duration==='anual'?1:0}
+function ncCIF(records,duration){
+ const valid=ncRelevantRecords(records).map(r=>ncAnnualGrade(r.sub)).filter(v=>v!==null&&v!==undefined&&v!==''&&Number.isInteger(Number(v))&&Number(v)>=0&&Number(v)<=20).map(Number);
+ const expected=ncExpectedYears(duration);
+ if(!expected||valid.length<expected)return {value:null,known:valid.length,expected};
+ const mean=valid.slice(-expected).reduce((a,b)=>a+b,0)/expected;
+ return {value:Math.round(mean),rawValue:mean,known:valid.length,expected};
+}
+function ncCFD(records,duration){
+ if(!ncCurrentRulesApply(readUserProfile()))return {value:null,pendingRules:true};
+ const cif=ncCIF(records,duration);if(cif.value===null)return {value:null,cif};
+ const examRecord=[...ncRelevantRecords(records)].reverse().find(r=>{const e=ncSubjectMeta(r.sub).exam;return e.score!==null&&e.score!==undefined&&e.score!==''&&Number.isFinite(Number(e.score))&&['final','both'].includes(e.purpose)});
+ if(!examRecord)return {value:cif.value,cif,exam:null};
+ const exam=Number(ncSubjectMeta(examRecord.sub).exam.score);
+ return {value:Math.round(cif.value*.75+exam*.25),cif,exam};
+}
+function ncCFC(options={}){
+ const profile=readUserProfile();const y=(database.schoolYears||[]).find(yr=>ncYearMeta(yr).grade===profile.schoolyear)||[...(database.schoolYears||[])].sort((a,b)=>ncYearStart(a)-ncYearStart(b)).slice(-1)[0];if(!y||profile.cycle!=='secondary'||profile.course==='Profissional'||!ncCurrentRulesApply(profile))return null;
+ const groups=new Map();
+ (database.schoolYears||[]).forEach(yr=>(yr.subjects||[]).forEach(sub=>{const key=sub.name.trim().toLocaleLowerCase('pt-PT');if(!groups.has(key))groups.set(key,{name:sub.name,records:[]});groups.get(key).records.push({y:yr,sub,grade:ncGradeOf(yr,sub)});}));
+ let numerator=0,denominator=0,items=[],pending=[];
+ for(const group of groups.values()){
+  const relevant=group.records.filter(r=>{const g=Number(String(r.grade).slice(0,2));return g>=10&&g<=Number(String(profile.schoolyear||'12.º ano').slice(0,2));});
+  if(!relevant.length)continue;const latest=relevant[relevant.length-1].sub;
+  const duration=ncDuration(latest,profile);if(duration==='excluded')continue;if(options.excludePhysicalEducation&&/educação física/i.test(group.name))continue;
+  const result=ncCFD(relevant,duration);const weight=duration==='trienal'?3:duration==='bienal'?2:duration==='anual'?1:0;
+  if(!weight)continue;
+  if(result.value===null){pending.push(group.name);items.push({name:group.name,duration,value:null,weight})}
+  else{numerator+=result.value*weight;denominator+=weight;items.push({name:group.name,duration,value:result.value,weight})}
+ }
+ const rawValue=denominator?numerator/denominator:null;return {value:rawValue===null?null:Math.round(rawValue),rawValue,items,pending,complete:pending.length===0&&items.length>0&&profile.historyCompleted===true};
+}
+function ncStatusLabel(status){return status==='completed'?'Concluído':status==='awaiting_completion'?'A aguardar conclusão':'Em curso'}
+function ncIsSecondaryProfile(){const p=readUserProfile();return p.cycle==='secondary'&&p.course!=='Profissional'}
+function ncProfileNeedsHistory(){const p=readUserProfile();return ncIsSecondaryProfile()&&/^1[12]\.º ano$/.test(p.schoolyear||'')&&p.historyCompleted!==true;}
+function ncHasPriorGrades(){const p=readUserProfile(),target=Number((p.schoolyear||'').slice(0,2));let n=0;(database.schoolYears||[]).forEach(y=>(y.subjects||[]).forEach(s=>{const grade=Number(String(ncGradeOf(y,s)).slice(0,2));if(grade<target&&s.finalGrade!==null&&s.finalGrade!==undefined&&s.finalGrade!=='')n++;}));return n>=(target===12?4:1);}
+function ncEnsureGradeYear(grade){
+ const p=readUserProfile(),current=Number(String(p.schoolyear||state.schoolyear||'').slice(0,2));const currentYear=(database.schoolYears||[]).find(y=>y.label===p.currentAcademicYearLabel)||(database.schoolYears||[]).find(y=>ncYearMeta(y).grade===p.schoolyear)||[...(database.schoolYears||[])].sort((a,b)=>ncYearStart(a)-ncYearStart(b)).slice(-1)[0];const start=ncYearStart(currentYear||activeYear());
+ const targetStart=start-(current-Number(grade));const label=`${targetStart}/${targetStart+1}`;
+ const y=ensureAcademicYear(label);const ym=ncYearMeta(y);ym.grade=`${grade}.º ano`;if(Number(grade)<current&&ym.status==='in_progress')ym.status='completed';
+ return y;
+}
+function ncEnsurePhysicalEducationRecords(){
+ const profile=readUserProfile();if(!ncIsSecondaryProfile()||!database.schoolYears.length)return;
+ const current=Number(String(profile.schoolyear||'').slice(0,2));if(current<10||current>12)return;
+ for(let grade=10;grade<=current;grade++){
+  const y=ncEnsureGradeYear(grade);let ef=y.subjects.find(s=>s.name.trim().toLocaleLowerCase('pt-PT')==='educação física');
+  if(!ef){ef={id:makeId('subject'),name:'Educação Física',schoolyear:`${grade}.º ano`,goal:null,finalGrade:null,periodData:{},academicMeta:{duration:'trienal',exam:{score:null,purpose:'none'}}};y.subjects.push(ef);y.periods.forEach(period=>periodData(ef,period.id,true));}
+  else ncSubjectMeta(ef).duration='trienal';
+ }
+}
+function ncAddSubjectToYear(y,across=false){
+ const name=prompt('Nome da disciplina a adicionar ao percurso:');if(!name||!name.trim())return;
+ const durationChoice=prompt('Duração da disciplina:\n3 = Trienal\n2 = Bienal\n1 = Anual','2');if(!durationChoice)return;
+ const duration=durationChoice==='3'?'trienal':durationChoice==='2'?'bienal':durationChoice==='1'?'anual':null;if(!duration){alert('Escolhe 3, 2 ou 1.');return;}
+ const profile=readUserProfile(),current=Number(String(profile.schoolyear||state.schoolyear||'').slice(0,2))||12;
+ const grades=across?(duration==='trienal'?Array.from({length:Math.max(1,current-9)},(_,i)=>10+i):duration==='bienal'?(current>=11?[10,11]:[10]):[current]):[Number(ncYearMeta(y).grade||current)];
+ grades.forEach(g=>{const target=across?ncEnsureGradeYear(g):y;let sub=target.subjects.find(s=>s.name.trim().toLocaleLowerCase('pt-PT')===name.trim().toLocaleLowerCase('pt-PT'));if(!sub){sub={id:makeId('subject'),name:name.trim(),schoolyear:`${g}.º ano`,goal:null,finalGrade:null,periodData:{},academicMeta:{duration,exam:{score:null,purpose:'none'},teacherFinal:null}};target.subjects.push(sub);target.periods.forEach(period=>periodData(sub,period.id,true));}else ncSubjectMeta(sub).duration=duration;});
+ const profileNow=readUserProfile();profileNow.historyCompleted=false;writeUserProfile(profileNow);persist();ncRenderHistory();
+}
+function ncRenderHistory(){
+ const host=$('historyContent');if(!host)return;ncEnsurePhysicalEducationRecords();
+ const profile=readUserProfile(),years=[...(database.schoolYears||[])].sort((a,b)=>ncYearStart(a)-ncYearStart(b));
+ if(ncIsSecondaryProfile()&&!profile.secondaryEntryYear){profile.secondaryEntryYear=ncDefaultEntryYear(profile);writeUserProfile(profile);}
+ const currentRules=ncCurrentRulesApply(profile);
+ let html='';
+ if(ncIsSecondaryProfile()){
+  const needs=ncProfileNeedsHistory();
+  html+=`<section class="nc-academic-card"><div class="row between"><div><h3>Perfil do ensino secundário</h3><p class="sub" style="margin:3px 0 0">${ncEsc(profile.course||'Curso não indicado')} · ${ncEsc(profile.schoolyear||state.schoolyear||'Ano não indicado')}</p></div><span class="nc-status ${needs?'warning':'ok'}">${needs?'! Por completar':'✓ Histórico iniciado'}</span></div><p class="sub">Completa as classificações finais dos anos anteriores. Adiciona as disciplinas em falta. A NotaCerta cria automaticamente os registos nos anos em que a disciplina existiu, conforme a duração que escolheres.</p><label class="nc-entry-year">Ano letivo em que começaste o 10.º ano<select id="ncEntryYear">${Array.from({length:13},(_,i)=>2018+i).map(start=>`<option value="${start}/${start+1}" ${profile.secondaryEntryYear===`${start}/${start+1}`?'selected':''}>${start}/${start+1}</option>`).join('')}</select></label><p class="sub">${currentRules?'Regime científico-humanístico com regras introduzidas a partir de 2023/2024.':'Percurso iniciado antes de 2023/2024: as fórmulas oficiais deste regime não serão aplicadas automaticamente.'}</p><div class="actions"><button type="button" class="secondary" id="ncAddHistorySubject">+ Adicionar disciplina aos anos anteriores</button><button type="button" id="ncConfirmHistory" ${ncHasPriorGrades()?'':'disabled'}>Já completei o histórico</button></div></section>`;
+ }
+ if(!years.length){host.innerHTML='<p class="empty">Ainda não existem anos letivos registados.</p>';return;}
+ years.forEach(y=>{
+  const ym=ncYearMeta(y);const active=y.id===database.active.academicYearId;const currentGrade=Number(String(profile.schoolyear||state.schoolyear||'').slice(0,2));
+  const gradeOptions=['10.º ano','11.º ano','12.º ano'].map(g=>`<option value="${g}" ${ym.grade===g?'selected':''}>${g}</option>`).join('');
+  html+=`<article class="history-year nc-year-card"><div class="row between"><div><strong>${ncEsc(y.label)}</strong><div class="muted" style="font-size:12px">${active?'Ano atualmente selecionado':'Ano letivo guardado'}</div></div><span class="nc-status ${ym.status==='completed'?'ok':ym.status==='awaiting_completion'?'warning':''}">${ncStatusLabel(ym.status)}</span></div>`;
+  if(ncIsSecondaryProfile())html+=`<div class="nc-year-controls"><label>Ano de escolaridade<select class="nc-year-grade" data-year="${ncEsc(y.id)}"><option value="">Selecionar</option>${gradeOptions}</select></label><label>Estado do ano<select class="nc-year-status" data-year="${ncEsc(y.id)}"><option value="in_progress" ${ym.status==='in_progress'?'selected':''}>Em curso</option><option value="awaiting_completion" ${ym.status==='awaiting_completion'?'selected':''}>A aguardar conclusão</option><option value="completed" ${ym.status==='completed'?'selected':''}>Concluído</option></select></label></div>`;
+  html+=`<div class="nc-periods"><strong>Períodos</strong>`+NC_PERIODS.map(([id,label],i)=>{const closed=!!ym.periods[id]?.closed;return `<span class="nc-period-chip ${closed?'closed':''}">${label}: ${closed?'Fechado':'Aberto'}</span>`}).join('')+`</div>`;
+  html+=`<div class="nc-subject-list"><div class="nc-subject-head"><span>Disciplina</span><span>Duração</span><span>Classificação final (3.º período)</span></div>`;
+  (y.subjects||[]).forEach(sub=>{
+   const sm=ncSubjectMeta(sub),duration=ncDuration(sub,profile),isSec=isSecondaryForYear(sub.schoolyear||ym.grade||profile.schoolyear),max=isSec?20:5,min=isSec?0:1;
+   const group=ncRecordsBySubject(sub.name),cif=ncCIF(group,duration),cfd=ncCFD(group,duration),exam=sm.exam;
+   html+=`<div class="nc-subject-row"><div><strong>${ncEsc(sub.name)}</strong><small>${ncEsc(sub.schoolyear||ym.grade||'Ano não definido')}</small></div><select class="nc-duration" data-year="${ncEsc(y.id)}" data-subject="${ncEsc(sub.id)}" aria-label="Duração de ${ncEsc(sub.name)}"><option value="trienal" ${duration==='trienal'?'selected':''}>Trienal (3)</option><option value="bienal" ${duration==='bienal'?'selected':''}>Bienal (2)</option><option value="anual" ${duration==='anual'?'selected':''}>Anual (1)</option><option value="excluded" ${duration==='excluded'?'selected':''}>Não pondera</option></select><input class="nc-annual-grade" data-year="${ncEsc(y.id)}" data-subject="${ncEsc(sub.id)}" type="number" min="${min}" max="${max}" step="1" placeholder="${min}–${max}" value="${ncAnnualGrade(sub)??''}" ${active&&ym.status==='in_progress'&&!ym.periods.p3?.closed?'disabled title="A classificação anual só deve ser registada depois de fechar o 3.º período."':''} aria-label="Classificação anual de ${ncEsc(sub.name)}"></div>`;
+   if(ncIsSecondaryProfile())html+=`<div class="nc-subject-extra"><span>CIF: <b>${currentRules?(cif.value===null?'Por completar':cif.value):'Regime a validar'}</b></span><span>CFD: <b>${currentRules?(cfd.value===null?'Por completar':cfd.value):'Regime a validar'}</b></span><label>Exame nacional <input class="nc-exam-score" data-year="${ncEsc(y.id)}" data-subject="${ncEsc(sub.id)}" type="number" min="0" max="20" step="1" placeholder="0–20" value="${exam.score??''}"></label><label>Finalidade <select class="nc-exam-purpose" data-year="${ncEsc(y.id)}" data-subject="${ncEsc(sub.id)}"><option value="none" ${exam.purpose==='none'?'selected':''}>Sem exame registado</option><option value="final" ${exam.purpose==='final'?'selected':''}>Conta para a classificação final</option><option value="ingress" ${exam.purpose==='ingress'?'selected':''}>Apenas prova de ingresso</option><option value="both" ${exam.purpose==='both'?'selected':''}>Classificação final e ingresso</option></select></label></div>`;
+  });
+  html+=`</div><div class="actions"><button type="button" class="secondary small nc-add-subject" data-year="${ncEsc(y.id)}">+ Disciplina</button><button type="button" class="secondary small nc-open-year" data-year="${ncEsc(y.id)}">Abrir este ano</button></div></article>`;
+ });
+ const cfc=ncCFC();
+ if(ncIsSecondaryProfile()){
+  html+=`<section class="nc-academic-card"><h3>Classificação final do curso (CFC)</h3><p class="sub">${currentRules?'Cálculo ponderado das classificações finais das disciplinas: trienais × 3, bienais × 2 e anuais × 1. Educação Moral e Religiosa não entra neste cálculo.':'O percurso foi iniciado antes de 2023/2024. As regras específicas desse regime precisam de validação antes de apresentar uma CFC oficial.'}</p><div class="nc-cfc-value">${!currentRules||cfc?.value===null||cfc?.value===undefined?'—':cfc.value}<small>${!currentRules?'Cálculo automático indisponível para este regime':cfc?.complete?'Histórico confirmado e classificações disponíveis':'Estimativa parcial — confirma o histórico e completa as classificações'}</small></div><div class="nc-cfc-list">${(cfc?.items||[]).map(i=>`<span>${ncEsc(i.name)} · ${i.value===null?'—':i.value} × ${i.weight}</span>`).join('')}</div>${cfc?.pending?.length?`<p class="sub">Por completar: ${cfc.pending.map(ncEsc).join(', ')}</p>`:''}</section>`;
+  const ratio=profile.accessRatio||'60/40',examAvg=profile.accessExamAverage??'',includeEF=profile.accessIncludePhysicalEducation===true,accessCfc=ncCFC({excludePhysicalEducation:!includeEF});const accessValue=accessCfc?.complete&&accessCfc?.value!==null&&accessCfc?.value!==undefined&&examAvg!==''?(accessCfc.value*10*(ratio==='60/40'?.6:.5)+Number(examAvg)*10*(ratio==='60/40'?.4:.5)):null;
+  html+=`<section class="nc-academic-card"><h3>Simulador de acesso ao ensino superior</h3><p class="sub">Escolhe a ponderação indicada pela instituição e pelo curso. Introduz a média ponderada das provas de ingresso (0–20). Esta é uma simulação simplificada; pré-requisitos, classificações mínimas e fórmulas especiais devem ser verificados no curso pretendido.</p><div class="nc-access-grid"><label>Ponderação secundário / provas<select id="ncAccessRatio"><option value="60/40" ${ratio==='60/40'?'selected':''}>60% / 40%</option><option value="50/50" ${ratio==='50/50'?'selected':''}>50% / 50%</option></select></label><label>Média ponderada das provas (0–20)<input id="ncAccessExamAverage" type="number" min="0" max="20" step="0.1" value="${ncEsc(examAvg)}" placeholder="Ex.: 16,5"></label></div><label class="nc-access-ef"><input id="ncAccessIncludeEF" type="checkbox" ${includeEF?'checked':''}> Considerar Educação Física (por exemplo, num curso de Desporto)</label><div class="nc-cfc-value">${accessValue===null?'—':accessValue.toLocaleString('pt-PT',{minimumFractionDigits:1,maximumFractionDigits:1})+' / 200'}<small>Nota de candidatura estimada</small></div></section>`;
+ }
+ html+=`<div class="actions"><button type="button" id="historyAddYear">+ Adicionar ano letivo</button></div>`;
+ host.innerHTML=html;
+ const accessEF=$('ncAccessIncludeEF');if(accessEF)accessEF.addEventListener('change',()=>{const p=readUserProfile();p.accessIncludePhysicalEducation=accessEF.checked;writeUserProfile(p);ncRenderHistory();});
+ const accessRatio=$('ncAccessRatio');if(accessRatio)accessRatio.addEventListener('change',()=>{const p=readUserProfile();p.accessRatio=accessRatio.value;writeUserProfile(p);ncRenderHistory();});
+ const accessExam=$('ncAccessExamAverage');if(accessExam)accessExam.addEventListener('change',()=>{const v=accessExam.value===''?null:Number(accessExam.value);if(v!==null&&(!Number.isFinite(v)||v<0||v>20)){alert('Introduz uma média entre 0 e 20.');accessExam.value=readUserProfile().accessExamAverage??'';return;}const p=readUserProfile();p.accessExamAverage=v;writeUserProfile(p);ncRenderHistory();});
+ const entrySelect=$('ncEntryYear');if(entrySelect)entrySelect.addEventListener('change',()=>{const p=readUserProfile();p.secondaryEntryYear=entrySelect.value;p.historyCompleted=false;writeUserProfile(p);ncRenderHistory();renderDashboard();});
+ host.querySelectorAll('.nc-year-grade').forEach(el=>el.addEventListener('change',()=>{const y=database.schoolYears.find(x=>x.id===el.dataset.year);if(!y)return;ncYearMeta(y).grade=el.value||null;y.subjects.forEach(s=>{if(el.value)s.schoolyear=el.value});persist();ncRenderHistory();}));
+ host.querySelectorAll('.nc-year-status').forEach(el=>el.addEventListener('change',()=>{const y=database.schoolYears.find(x=>x.id===el.dataset.year);if(!y)return;const ym=ncYearMeta(y);if(el.value==='completed'&&!ym.periods.p3?.closed){alert('Para concluir o ano, fecha primeiro o 3.º período.');el.value=ym.status;return;}if(el.value==='completed'&&!confirm('Queres marcar este ano como concluído? Podes continuar a corrigir os dados mais tarde.')){el.value=ym.status;return;}ym.status=el.value;y.isHistorical=el.value==='completed';persist();ncRenderHistory();}));
+ host.querySelectorAll('.nc-duration').forEach(el=>el.addEventListener('change',()=>{const sub=database.schoolYears.find(x=>x.id===el.dataset.year)?.subjects.find(s=>s.id===el.dataset.subject);if(!sub)return;ncSubjectMeta(sub).duration=el.value;persist();ncRenderHistory();}));
+ host.querySelectorAll('.nc-annual-grade').forEach(el=>el.addEventListener('change',()=>{const sub=database.schoolYears.find(x=>x.id===el.dataset.year)?.subjects.find(s=>s.id===el.dataset.subject);if(!sub)return;const y=database.schoolYears.find(x=>x.id===el.dataset.year),grade=ncYearMeta(y).grade||sub.schoolyear,sec=isSecondaryForYear(grade),min=sec?0:1,max=sec?20:5;const v=el.value===''?null:Number(el.value);if(v!==null&&(!Number.isInteger(v)||v<min||v>max)){alert(`Introduz uma classificação inteira entre ${min} e ${max}.`);el.value=sub.finalGrade??'';return;}sub.finalGrade=v;const p3=periodData(sub,'p3',true);p3.teacherGrade=v;persist();ncRenderHistory();}));
+ host.querySelectorAll('.nc-exam-score').forEach(el=>el.addEventListener('change',()=>{const sub=database.schoolYears.find(x=>x.id===el.dataset.year)?.subjects.find(s=>s.id===el.dataset.subject);if(!sub)return;const v=el.value===''?null:Number(el.value);if(v!==null&&(!Number.isInteger(v)||v<0||v>20)){alert('A nota do exame deve ser um número inteiro entre 0 e 20.');el.value=ncSubjectMeta(sub).exam.score??'';return;}ncSubjectMeta(sub).exam.score=v;persist();ncRenderHistory();}));
+ host.querySelectorAll('.nc-exam-purpose').forEach(el=>el.addEventListener('change',()=>{const sub=database.schoolYears.find(x=>x.id===el.dataset.year)?.subjects.find(s=>s.id===el.dataset.subject);if(!sub)return;ncSubjectMeta(sub).exam.purpose=el.value;persist();ncRenderHistory();}));
+ host.querySelectorAll('.nc-open-year').forEach(el=>el.addEventListener('click',()=>{database.active.academicYearId=el.dataset.year;const y=activeYear();database.active.periodId=y.periods.find(p=>p.label===state.period)?.id||y.periods[0]?.id||null;database.active.subjectId=y.subjects[0]?.id||null;hydrateActive();renderAll();showSubjects()}));
+ host.querySelectorAll('.nc-add-subject').forEach(el=>el.addEventListener('click',()=>{const y=database.schoolYears.find(x=>x.id===el.dataset.year);if(y)ncAddSubjectToYear(y,false)}));
+ const add=$('historyAddYear');if(add)add.addEventListener('click',()=>$('addAcademicYear').click());
+ const addHistory=$('ncAddHistorySubject');if(addHistory)addHistory.addEventListener('click',()=>{const y=activeYear();if(y)ncAddSubjectToYear(y,true)});
+ const confirmHistory=$('ncConfirmHistory');if(confirmHistory)confirmHistory.addEventListener('click',()=>{if(!ncHasPriorGrades()){alert('Regista primeiro algumas classificações finais dos anos anteriores.');return;}if(!confirm('Confirmas que já introduziste todas as classificações dos anos anteriores e as disciplinas necessárias ao teu percurso?'))return;const p=readUserProfile();p.historyCompleted=true;writeUserProfile(p);ncRenderHistory();renderDashboard();});
+}
+// Guardar os metadados dentro da base de dados principal: as cópias completas existentes incluem-nos automaticamente.
+(database.schoolYears||[]).forEach(y=>{ncYearMeta(y);(y.subjects||[]).forEach(s=>ncSubjectMeta(s));});
+const ncInitialProfile=readUserProfile();if(ncInitialProfile.profileCompleted&&!ncInitialProfile.currentAcademicYearLabel&&activeYear()){ncInitialProfile.currentAcademicYearLabel=activeYear().label;writeUserProfile(ncInitialProfile);}if(ncIsSecondaryProfile())ncEnsurePhysicalEducationRecords();persist();
+const ncOriginalHistory=renderHistoryOverview;
+renderHistoryOverview=ncRenderHistory;
+// Reforçar o resumo inicial com o estado do percurso e o alerta de histórico em falta.
+const ncOriginalDashboard=renderDashboard;
+renderDashboard=function(){ncOriginalDashboard();ncRenderHomeYearSelect();const profile=readUserProfile();let warning=$('ncProfileMenuWarning');if(!warning){const link=document.querySelector('.side-link[data-view="settings"]');if(link){warning=document.createElement('span');warning.id='ncProfileMenuWarning';warning.className='nc-menu-warning';warning.textContent='!';link.appendChild(warning);}}if(warning)warning.hidden=!ncProfileNeedsHistory();let box=$('ncHomeAcademicNotice');if(!box){box=document.createElement('div');box.id='ncHomeAcademicNotice';box.className='nc-academic-card';$('dashboardView').insertBefore(box,$('dashboardOverview'));}const needs=ncProfileNeedsHistory();const y=activeYear(),status=y?ncYearMeta(y).status:'in_progress';box.hidden=!(needs||status!=='in_progress');box.innerHTML=needs?`<div class="row between"><strong>Completa o teu percurso escolar</strong><span class="nc-status warning">! Perfil incompleto</span></div><p class="sub">Faltam classificações de anos anteriores para calcular corretamente a tua classificação interna final e a média do secundário.</p><button type="button" class="secondary" id="ncGoHistory">Completar perfil</button>`:`<div class="row between"><strong>Estado do ano letivo</strong><span class="nc-status ${status==='completed'?'ok':'warning'}">${ncStatusLabel(status)}</span></div><p class="sub">${status==='awaiting_completion'?'O 3.º período está fechado. Podes continuar a completar exames e classificações finais.':status==='completed'?'Este ano está marcado como concluído. Podes continuar a consultar e corrigir os dados.':''}</p>`;const b=$('ncGoHistory');if(b)b.addEventListener('click',showHistory);};
+// Períodos: navegação, fecho e desbloqueio de todo o período.
+function ncPeriodLocked(){const y=activeYear(),p=activePeriod();return !!(y&&p&&ncYearMeta(y).periods[p.id]?.closed)}
+function ncApplyPeriodLock(){const locked=ncPeriodLocked();['assessmentsPanel','criteriaPanel'].forEach(id=>{const panel=$(id);if(!panel)return;panel.querySelectorAll('input,select,textarea,button').forEach(el=>{el.disabled=locked;});});const p=activePeriod();const note=$('ncPeriodLockNote');if(note){note.hidden=!locked;note.textContent=locked?`Este período está fechado. Desbloqueia-o para editar todas as avaliações e critérios de ${p?.label||'este período'}.`:'';}const action=$('ncPeriodAction');if(action){action.textContent=locked?'Desbloquear período':'Fechar período';action.className=locked?'secondary small':'small';}}
+function ncRenderPeriodNav(){const top=document.querySelector('#detailView .detail-top');if(!top)return;let nav=$('ncPeriodControls');if(!nav){nav=document.createElement('div');nav.id='ncPeriodControls';nav.className='nc-period-controls';top.appendChild(nav);}const y=activeYear(),p=activePeriod();if(!y||!p){nav.innerHTML='';return;}const ym=ncYearMeta(y),idx=NC_PERIODS.findIndex(x=>x[0]===p.id);if(idx<0){nav.innerHTML='';return;}nav.innerHTML=`<div class="nc-period-buttons">${NC_PERIODS.map(([id,label],i)=>{const priorOk=i===0||ym.periods[NC_PERIODS[i-1][0]]?.closed||id===p.id;return `<button type="button" class="secondary small ${id===p.id?'active':''}" data-nc-period="${id}" ${priorOk?'':'disabled'}>${label.replace(' período','')}</button>`}).join('')}</div><button type="button" id="ncPeriodAction" class="${ym.periods[p.id]?.closed?'secondary small':'small'}">${ym.periods[p.id]?.closed?'Desbloquear período':'Fechar período'}</button><p id="ncPeriodLockNote" class="nc-lock-note" hidden></p>`;
+ nav.querySelectorAll('[data-nc-period]').forEach(btn=>btn.addEventListener('click',()=>{const id=btn.dataset.ncPeriod;const i=NC_PERIODS.findIndex(x=>x[0]===id);if(i>0&&!ym.periods[NC_PERIODS[i-1][0]]?.closed&&id!==p.id){alert('Fecha primeiro o período anterior para desbloquear este.');return;}persist();database.active.periodId=id;database.active.subjectId=activeSubject()?.id||y.subjects[0]?.id||null;hydrateActive();renderAll();showDetails();}));
+ $('ncPeriodAction').addEventListener('click',()=>{const status=ym.periods[p.id];if(status.closed){if(!confirm(`Queres desbloquear o ${p.label}? Todas as avaliações e critérios deste período voltarão a ser editáveis.`))return;status.closed=false;status.closedAt=null;if(ym.status==='completed')ym.status='awaiting_completion';}else{if(!confirm(`Queres fechar o ${p.label}? As avaliações e critérios ficarão protegidos contra alterações. Podes desbloquear o período mais tarde.`))return;status.closed=true;status.closedAt=new Date().toISOString();if(p.id==='p3')ym.status='awaiting_completion';}persist();renderAll();showDetails();});
+ ncApplyPeriodLock();
+}
+const ncBaseRenderAll=renderAll;
+renderAll=function(){ncBaseRenderAll();ncRenderPeriodNav();ncApplyPeriodLock();ncRenderAllPeriodAssessments();ncRenderHomeYearSelect();ncRenderTeacherClassification();};
+const ncBaseShowDetails=showDetails;
+showDetails=function(){ncBaseShowDetails();ncRenderPeriodNav();ncApplyPeriodLock();};
+// Classificação atribuída pelo professor por período, separada da média calculada a partir das avaliações.
+function ncRenderTeacherClassification(){
+ const panel=$('summaryPanel'),sub=activeSubject(),p=activePeriod();if(!panel||!sub||!p)return;let box=$('ncTeacherClassification');if(!box){box=document.createElement('section');box.id='ncTeacherClassification';box.className='nc-academic-card';panel.appendChild(box);}
+ const pd=periodData(sub,p.id,true),secondary=isSecondaryForYear(sub.schoolyear||state.schoolyear),min=secondary?0:1,max=secondary?20:5,mean=averages().mean,suggestion=mean===null?null:(secondary?Math.round(mean/5):levelFor(mean)),teacher=pd.teacherGrade??(p.id==='p3'?sub.finalGrade:null),locked=!!ncYearMeta(activeYear()).periods[p.id]?.closed;
+ box.innerHTML=`<h3>Classificação do período</h3><p class="sub">A média das avaliações é uma estimativa. Quando souberes a classificação atribuída pelo professor, regista-a aqui.</p><div class="nc-grade-summary"><div><small>Classificação do professor</small><strong>${teacher===null||teacher===undefined||teacher===''?'Ainda não registada':ncEsc(teacher)+(secondary?' valores':' nível')}</strong></div><div><small>${teacher===null||teacher===undefined||teacher===''?'Sugestão provisória':'Média calculada'}</small><strong>${teacher===null||teacher===undefined||teacher===''?(suggestion===null?'—':ncEsc(suggestion)+(secondary?' valores':' nível')):(mean===null?'—':ncEsc(displayScore(mean))+(secondary?' valores':' / 100'))}</strong></div></div><label class="nc-teacher-input">Classificação atribuída pelo professor<input class="nc-teacher-grade" type="number" min="${min}" max="${max}" step="1" value="${teacher??''}" placeholder="${min}–${max}" ${locked?'disabled':''}></label>${locked?'<p class="nc-lock-note">Este período está fechado. Desbloqueia-o para alterar a classificação deste período.</p>':''}`;
+ const input=box.querySelector('.nc-teacher-grade');if(input)input.addEventListener('change',()=>{const v=input.value===''?null:Number(input.value);if(v!==null&&(!Number.isInteger(v)||v<min||v>max)){alert(`Introduz uma classificação inteira entre ${min} e ${max}.`);input.value=teacher??'';return;}pd.teacherGrade=v;if(p.id==='p3')sub.finalGrade=v;persist();renderAll();});
+}
+
+// Seletor global do ano letivo na homepage: consultar outro ano não altera o ano atual do perfil.
+function ncRenderHomeYearSelect(){
+ const host=$('homeYearLabel');if(!host)return;let sel=$('ncHomeAcademicYear');if(!sel){sel=document.createElement('select');sel.id='ncHomeAcademicYear';sel.setAttribute('aria-label','Ano letivo a consultar');sel.style.cssText='max-width:220px;margin-top:7px;padding:7px 9px;font-size:13px';host.insertAdjacentElement('afterend',sel);sel.addEventListener('change',()=>{persist();database.active.academicYearId=sel.value;const y=activeYear(),p=y?.periods.find(x=>x.label===state.period)||y?.periods[1]||y?.periods[0];database.active.periodId=p?.id||null;database.active.subjectId=y?.subjects[0]?.id||null;hydrateActive();renderAll();showDashboard();});}
+ let add=$('ncHomeAddYear');if(!add){add=document.createElement('button');add.id='ncHomeAddYear';add.type='button';add.className='secondary small';add.textContent='+ Novo ano letivo';add.style.cssText='margin:7px 0 0 7px';sel.insertAdjacentElement('afterend',add);add.addEventListener('click',()=>$('addAcademicYear').click());}
+ sel.innerHTML=(database.schoolYears||[]).map(y=>`<option value="${ncEsc(y.id)}">${ncEsc(y.label)}</option>`).join('');if(activeYear())sel.value=activeYear().id;sel.hidden=(database.schoolYears||[]).length<2;add.hidden=!(database.schoolYears||[]).length;
+ const legacyYear=$('academicYear')?.closest('.field'),legacyPeriod=$('period')?.closest('.field'),legacyAdd=$('addAcademicYear')?.parentElement;if(legacyYear)legacyYear.hidden=true;if(legacyPeriod)legacyPeriod.hidden=true;if(legacyAdd)legacyAdd.hidden=true;
+}
+// Mostrar todas as avaliações agrupadas por período na página da disciplina, mantendo a edição no período ativo.
+function ncRenderAllPeriodAssessments(){
+ const panel=$('assessmentsPanel'),sub=activeSubject();if(!panel||!sub)return;let box=$('ncAllPeriodAssessments');if(!box){box=document.createElement('section');box.id='ncAllPeriodAssessments';box.className='nc-academic-card';panel.insertBefore(box,panel.firstChild);}
+ const y=activeYear();box.innerHTML=`<h3>Avaliações dos três períodos</h3><p class="sub">Consulta o percurso completo. Para editar, utiliza a área do período selecionado mais abaixo.</p>`+NC_PERIODS.map(([id,label])=>{const pd=periodData(sub,id,false),closed=!!ncYearMeta(y).periods[id]?.closed,items=pd?.assessments||[];return `<div class="nc-all-period"><div class="row between"><strong>${label}</strong><span class="nc-status ${closed?'ok':''}">${closed?'Fechado':'Em curso'}</span></div>${items.length?`<ul>${items.map(a=>{const category=(pd?.categories||[]).find(c=>c.id===a.category)?.name||'';return `<li><div><strong>${ncEsc(a.name)}</strong><small>${ncEsc(category)}${a.date?' · '+ncEsc(a.date):''}</small></div><span>${a.score===null||a.score===undefined?'—':ncEsc(displayForPeriod(a.score,sub.schoolyear))}</span></li>`}).join('')}</ul>`:'<p class="muted" style="font-size:12px;margin:5px 0 10px">Sem avaliações registadas.</p>'}</div>`}).join('');
+}
+function displayForPeriod(score,schoolyear){return isSecondaryForYear(schoolyear)?(Number(score)/5).toLocaleString('pt-PT',{maximumFractionDigits:1}):String(score);}
+
+// Atualizar cópias e exportações após qualquer alteração.
+const ncOldMakeBackup=makeFullBackup;
+makeFullBackup=function(){const b=ncOldMakeBackup();b.academicRulesVersion=NC_META_VERSION;b.includesAcademicJourney=true;return b;};
+// Estado de ano selecionado permanece separado do perfil/ano atual.
+renderDashboard();ncRenderHomeYearSelect();ncRenderPeriodNav();ncApplyPeriodLock();ncRenderTeacherClassification();
+})();
+
 </script>
 <script>
 if ("serviceWorker" in navigator) {
